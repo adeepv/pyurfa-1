@@ -42,6 +42,9 @@ def pars_params(io, io_type, codelist, docslist, code_idt_cnt=glob_idnt_cnt + 1,
             curcode = ''
             default = 0
             def_flag = ' '
+            if isin('array_index',prm.attrib):
+                idx = "[{}]".format(prm.attrib['array_index'])
+            else: idx = ''
             if isin('default', prm.attrib):
                 default = prm.attrib['default']
                 if default == '':
@@ -53,8 +56,8 @@ def pars_params(io, io_type, codelist, docslist, code_idt_cnt=glob_idnt_cnt + 1,
             if io_type == 'input':
                 curcode = "self.pck.add_data(params['{}'], {})"
             elif io_type == 'output':
-                curcode = "ret['{}'] = self.pck.get_data({})"
-            codelist.append(idt + curcode.format(prm.attrib['name'], type))
+                curcode = "ret['{}']{} = self.pck.get_data({})"
+            codelist.append(idt + curcode.format(prm.attrib['name'], idx, type))
             if default:
                 def_flag = ' = _def_ '
             docslist.append(":(s){type_idt}{prm_name} :\t({type_symb}){defs} - ".format(
@@ -85,18 +88,20 @@ def pars_params(io, io_type, codelist, docslist, code_idt_cnt=glob_idnt_cnt + 1,
 
         elif prm.tag == 'for':
             count = prm.attrib['count']
+            idx = prm.attrib['name']
             if count.count('size('):
                 count = size2len(count)
             if io_type == 'input':
-                codelist.append(idt + "for {} in params['{}']:".format(count + '_idx', count))
+#                codelist.append(idt + "for {} in params['{}']:".format(count + '_idx', count))
+                codelist.append(idt + "for {} in range({}):".format(idx, count))
                 pars_params(prm, io_type, codelist, docslist, code_idt_cnt + 1, doc_idt_cnt + 1)
             elif io_type == 'output':
-                codelist.append(idt + "{0}_idx = ret['{0}']".format(prm.attrib['count']))
-                codelist.append(idt + "while {}_idx: ".format(prm.attrib['count']))
+                codelist.append(idt + "{0} = ret['{0}']".format(count))
+                codelist.append(idt + "for {} in range({}): ".format(idx,count))
                 codelist.append(idt + glob_idnt + 'self.pck.recv(self.sck)')
                 #                codelist.append(idt + glob_idnt + '{} = dict() '.format(''))
                 pars_params(prm, io_type, codelist, docslist, code_idt_cnt + 1, doc_idt_cnt + 1)
-                codelist.append(idt + glob_idnt + "{}_idx -= 1".format(prm.attrib['count']))
+#                codelist.append(idt + glob_idnt + "{}_idx -= 1".format(prm.attrib['count']))
 
         elif prm.tag == 'break':
             codelist.append(idt + prm.tag)
@@ -177,7 +182,7 @@ def printing():
             fn_ret = 'ret'
             code.append(glob_idnt * 2 + '#--------- output')
             code.append(glob_idnt * 2 + 'self.pck.recv(self.sck)')
-            code.append(glob_idnt * 2 + 'ret = {}')
+            code.append(glob_idnt * 2 + 'ret = defaultdict(dict)')
             for prm_out in fn['code']['output']:
                 code.append(prm_out)
         code.append(glob_idnt * 2 + 'if self.pck.recv(self.sck): return ' + fn_ret)

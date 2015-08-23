@@ -128,13 +128,15 @@ def pars_params(io, io_type, codelist, docslist, code_idt_cnt=glob_idnt_cnt + 1,
                 si = ''
                 if isin('dst_index',prm.attrib):
                     for i in prm.attrib['dst_index'].split(','):  di += "[{}]".format(i)
-                dref = 'ret[{}]{}'.format(prm.attrib['dst'],di)
+                dref = "ret['{}']{}".format(prm.attrib['dst'],di)
                 names[io_type][prm.attrib['dst']] = dref
                 if isin('src',prm.attrib):
                     if isin('src_index',prm.attrib):
                         for i in prm.attrib['src_index'].split(','):  si += "[{}]".format(i)
                     sref = resolv_names(prm.attrib['src'],io_type,names)
-                else: sref = prm.attrib['value']
+                elif 'value' in prm.attrib:
+                    sref = prm.attrib['value']
+                    if isinstance(sref,str): sref = '"{0}"'.format(sref)
                 codelist.append(idt + '{}={}{}'.format(dref, sref, si))
             else:
                 pass

@@ -21,12 +21,19 @@ glob_idnt_symb = ' '
 glob_idnt_cnt = 1
 glob_idnt = glob_idnt_symb * glob_idnt_symb_cnt * glob_idnt_cnt
 functions = []
+def resolv_names(ref,io_type,names):
+    """
 
+    :type names: dict()
+    """
+    if io_type == 'output' and ref in names['input']: return names['input'][ref]
+    if ref in names[io_type]:
+        return names[io_type][ref]
+    return ref
 
-def pars_params(io, io_type, codelist, docslist, code_idt_cnt=glob_idnt_cnt + 1, doc_idt_cnt=1):
+def pars_params(io, io_type, codelist, docslist, code_idt_cnt=glob_idnt_cnt + 1, doc_idt_cnt=1, names={}):
     for prm in io:
         idt = glob_idnt * code_idt_cnt
-
         if prm.tag in ('string', 'integer', 'long', 'double', 'ip_address'):
             type = ''
             if prm.tag == 'string':
@@ -39,25 +46,39 @@ def pars_params(io, io_type, codelist, docslist, code_idt_cnt=glob_idnt_cnt + 1,
                 type = 'U_TP_D'
             elif prm.tag == 'ip_address':
                 type = 'U_TP_IP'
-            curcode = ''
             default = 0
             def_flag = ' '
+            idx = ''
             if isin('array_index',prm.attrib):
-                idx = "[{}]".format(prm.attrib['array_index'])
-            else: idx = ''
+                for i in prm.attrib['array_index'].split(','):
+                    idx += "[{}]".format(i)
             if isin('default', prm.attrib):
                 default = prm.attrib['default']
                 if default == '':
                     default = "''"
-                if default.count('size('):
-                    default = size2len(default)
+                p = re.findall(r'size[(](\w+)[)]', default)
+                if p:
+                    names['input'][p[0]] = "params['{}']".format(p[0])
+                    default = "len({})".format(names['input'][p[0]])
+
                 codelist.append(idt + "if '{0}' not in params: params['{0}'] = {1}".format(
                     prm.attrib['name'], default))
             if io_type == 'input':
-                curcode = "self.pck.add_data(params['{}'], {})"
+                ref = "params['%s']%s" % (prm.attrib['name'],idx)
+                codelist.append(idt + "self.pck.add_data({}, {})".format(ref, type))
             elif io_type == 'output':
-                curcode = "ret['{}']{} = self.pck.get_data({})"
-            codelist.append(idt + curcode.format(prm.attrib['name'], idx, type))
+                if isin('array_index',prm.attrib):
+                    idxs = prm.attrib['array_index'].split(',')
+                    if len(idxs) > 1:
+                        base = "ret['%s']" % prm.attrib['name']
+                        for i in idxs[:-1]:
+                            s = 'if not {i} in {b}:{b}[{i}] = dict()'.format(i=i,b=base)
+                            base = '{b}[{i}]'.format(b=base,i=i)
+                            codelist.append(idt + s)
+                ref = "ret['%s']%s" % (prm.attrib['name'],idx)
+                codelist.append(idt + "{} = self.pck.get_data({})".format(ref, type))
+            if not prm.attrib['name'] in names[io_type]:
+                names[io_type][prm.attrib['name']] = ref
             if default:
                 def_flag = ' = _def_ '
             docslist.append(":(s){type_idt}{prm_name} :\t({type_symb}){defs} - ".format(
@@ -72,36 +93,51 @@ def pars_params(io, io_type, codelist, docslist, code_idt_cnt=glob_idnt_cnt + 1,
                 condit = ' == '
             elif prm.attrib['condition'] == 'ne':
                 condit = ' != '
-            pm_arr_if = ''
-            if io_type == 'input':
-                pm_arr_if = "params"
-            elif io_type == 'output':
-                pm_arr_if = "ret"
-            codelist.append(idt + "if {arr_name}['{var_name}'] {exp_condit} {value}:".format(
-                arr_name=pm_arr_if,
-                var_name=prm.attrib['variable'],
+            codelist.append(idt + "if {ref} {exp_condit} {value}:".format(
+                ref= resolv_names(prm.attrib['variable'], io_type, names),
                 exp_condit=condit,
                 value=prm.attrib['value']
             )
             )
-            pars_params(prm, io_type, codelist, docslist, code_idt_cnt + 1, doc_idt_cnt + 1)
+            pars_params(prm, io_type, codelist, docslist, code_idt_cnt + 1, doc_idt_cnt + 1, names)
 
         elif prm.tag == 'for':
             count = prm.attrib['count']
             idx = prm.attrib['name']
-            if count.count('size('):
-                count = size2len(count)
+            p = re.findall(r'size[(](\w+)[)]', count)
+            if p:
+                if io_type == 'input': names['input'][p[0]] = "params['{}']".format(p[0])
+                count = "len({})".format(names['input'][p[0]])
+            else:
+                count = resolv_names(count,io_type,names)
             if io_type == 'input':
 #                codelist.append(idt + "for {} in params['{}']:".format(count + '_idx', count))
                 codelist.append(idt + "for {} in range({}):".format(idx, count))
-                pars_params(prm, io_type, codelist, docslist, code_idt_cnt + 1, doc_idt_cnt + 1)
+                pars_params(prm, io_type, codelist, docslist, code_idt_cnt + 1, doc_idt_cnt + 1, names)
             elif io_type == 'output':
-                codelist.append(idt + "{0} = ret['{0}']".format(count))
+                # codelist.append(idt + "{0} = ret['{0}']".format(count))
                 codelist.append(idt + "for {} in range({}): ".format(idx,count))
                 codelist.append(idt + glob_idnt + 'self.pck.recv(self.sck)')
                 #                codelist.append(idt + glob_idnt + '{} = dict() '.format(''))
-                pars_params(prm, io_type, codelist, docslist, code_idt_cnt + 1, doc_idt_cnt + 1)
+                pars_params(prm, io_type, codelist, docslist, code_idt_cnt + 1, doc_idt_cnt + 1, names)
 #                codelist.append(idt + glob_idnt + "{}_idx -= 1".format(prm.attrib['count']))
+
+        elif prm.tag == 'set':
+            if io_type == 'output':
+                di = ''
+                si = ''
+                if isin('dst_index',prm.attrib):
+                    for i in prm.attrib['dst_index'].split(','):  di += "[{}]".format(i)
+                dref = 'ret[{}]{}'.format(prm.attrib['dst'],di)
+                names[io_type][prm.attrib['dst']] = dref
+                if isin('src',prm.attrib):
+                    if isin('src_index',prm.attrib):
+                        for i in prm.attrib['src_index'].split(','):  si += "[{}]".format(i)
+                    sref = resolv_names(prm.attrib['src'],io_type,names)
+                else: sref = prm.attrib['value']
+                codelist.append(idt + '{}={}{}'.format(dref, sref, si))
+            else:
+                pass
 
         elif prm.tag == 'break':
             codelist.append(idt + prm.tag)
@@ -139,16 +175,17 @@ def building():
                 })
             })
             )
+            names = {'input':{},'output':{}}
             for io in funct:
                 if io.tag == 'input' and len(io):
                     functions[-1]['definit']['params'] = ', params'
-                    pars_params(io, io.tag, functions[-1]['code']['input'], functions[-1]['docstrings']['params'])
+                    pars_params(io, io.tag, functions[-1]['code']['input'], functions[-1]['docstrings']['params'],names = names)
                 if io.tag == 'output' and len(io):
-                    pars_params(io, io.tag, functions[-1]['code']['output'], functions[-1]['docstrings']['returns'])
+                    pars_params(io, io.tag, functions[-1]['code']['output'], functions[-1]['docstrings']['returns'],names = names)
 
 
 def printing():
-    code = []
+    code = [glob_idnt + 'from collections import defaultdict']
     fn_cur_num = 0
     for fn in functions:
         fn_cur_num += 1

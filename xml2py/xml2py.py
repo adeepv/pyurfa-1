@@ -51,21 +51,28 @@ def pars_params(io, io_type, codelist, docslist, code_idt_cnt=glob_idnt_cnt + 1,
             idx = ''
             if isin('array_index',prm.attrib):
                 for i in prm.attrib['array_index'].split(','):
-                    idx += "[{}]".format(i)
+                    idx += "[{0}]".format(i)
             if isin('default', prm.attrib):
                 default = prm.attrib['default']
-                if default == '':
-                    default = "''"
                 p = re.findall(r'size[(](\w+)[)]', default)
                 if p:
-                    names['input'][p[0]] = "params['{}']".format(p[0])
-                    default = "len({})".format(names['input'][p[0]])
+                    names['input'][p[0]] = "params['{0}']".format(p[0])
+                    default = "len({0})".format(names['input'][p[0]])
+                elif default in names[io_type]:
+                    default=resolv_names(default,io_type,names)
+                elif re.findall(r'\(\)$',default):
+                    pass
+                else:
+                    try:
+                        float(default)
+                    except ValueError:
+                        default = "'{0}'".format(default)
 
                 codelist.append(idt + "if '{0}' not in params: params['{0}'] = {1}".format(
                     prm.attrib['name'], default))
             if io_type == 'input':
                 ref = "params['%s']%s" % (prm.attrib['name'],idx)
-                codelist.append(idt + "self.pck.add_data({}, {})".format(ref, type))
+                codelist.append(idt + "self.pck.add_data({0}, {1})".format(ref, type))
             elif io_type == 'output':
                 if isin('array_index',prm.attrib):
                     idxs = prm.attrib['array_index'].split(',')
@@ -76,7 +83,7 @@ def pars_params(io, io_type, codelist, docslist, code_idt_cnt=glob_idnt_cnt + 1,
                             base = '{b}[{i}]'.format(b=base,i=i)
                             codelist.append(idt + s)
                 ref = "ret['%s']%s" % (prm.attrib['name'],idx)
-                codelist.append(idt + "{} = self.pck.get_data({})".format(ref, type))
+                codelist.append(idt + "{0} = self.pck.get_data({1})".format(ref, type))
             if not prm.attrib['name'] in names[io_type]:
                 names[io_type][prm.attrib['name']] = ref
             if default:
@@ -106,38 +113,34 @@ def pars_params(io, io_type, codelist, docslist, code_idt_cnt=glob_idnt_cnt + 1,
             idx = prm.attrib['name']
             p = re.findall(r'size[(](\w+)[)]', count)
             if p:
-                if io_type == 'input': names['input'][p[0]] = "params['{}']".format(p[0])
-                count = "len({})".format(names['input'][p[0]])
+                if io_type == 'input': names['input'][p[0]] = "params['{0}']".format(p[0])
+                count = "len({0})".format(names['input'][p[0]])
             else:
                 count = resolv_names(count,io_type,names)
             if io_type == 'input':
-#                codelist.append(idt + "for {} in params['{}']:".format(count + '_idx', count))
-                codelist.append(idt + "for {} in range({}):".format(idx, count))
+                codelist.append(idt + "for {0} in range({1}):".format(idx, count))
                 pars_params(prm, io_type, codelist, docslist, code_idt_cnt + 1, doc_idt_cnt + 1, names)
             elif io_type == 'output':
-                # codelist.append(idt + "{0} = ret['{0}']".format(count))
-                codelist.append(idt + "for {} in range({}): ".format(idx,count))
+                codelist.append(idt + "for {0} in range({1}): ".format(idx,count))
                 codelist.append(idt + glob_idnt + 'self.pck.recv(self.sck)')
-                #                codelist.append(idt + glob_idnt + '{} = dict() '.format(''))
                 pars_params(prm, io_type, codelist, docslist, code_idt_cnt + 1, doc_idt_cnt + 1, names)
-#                codelist.append(idt + glob_idnt + "{}_idx -= 1".format(prm.attrib['count']))
 
         elif prm.tag == 'set':
             if io_type == 'output':
                 di = ''
                 si = ''
                 if isin('dst_index',prm.attrib):
-                    for i in prm.attrib['dst_index'].split(','):  di += "[{}]".format(i)
-                dref = "ret['{}']{}".format(prm.attrib['dst'],di)
+                    for i in prm.attrib['dst_index'].split(','):  di += "[{0}]".format(i)
+                dref = "ret['{0}']{1}".format(prm.attrib['dst'],di)
                 names[io_type][prm.attrib['dst']] = dref
                 if isin('src',prm.attrib):
                     if isin('src_index',prm.attrib):
-                        for i in prm.attrib['src_index'].split(','):  si += "[{}]".format(i)
+                        for i in prm.attrib['src_index'].split(','):  si += "[{0}]".format(i)
                     sref = resolv_names(prm.attrib['src'],io_type,names)
                 elif 'value' in prm.attrib:
                     sref = prm.attrib['value']
                     if isinstance(sref,str): sref = '"{0}"'.format(sref)
-                codelist.append(idt + '{}={}{}'.format(dref, sref, si))
+                codelist.append(idt + '{0}={1}{2}'.format(dref, sref, si))
             else:
                 pass
 
@@ -145,10 +148,10 @@ def pars_params(io, io_type, codelist, docslist, code_idt_cnt=glob_idnt_cnt + 1,
             codelist.append(idt + prm.tag)
 
         elif prm.tag == 'error':
-            codelist.append(idt + "ret['error'] = dict({{{}:\"{}\"}})".format(
+            codelist.append(idt + "ret['error'] = dict({{{0}:\"{1}\"}})".format(
                 prm.attrib['code'], prm.attrib['comment']))
-            docslist.append(":(s){}error : dict:".format('  ' * doc_idt_cnt))
-            docslist.append(":(i){}code : (s) msg - error code:msg if fail".format('  ' * (doc_idt_cnt + 1)))
+            docslist.append(":(s){0}error : dict:".format('  ' * doc_idt_cnt))
+            docslist.append(":(i){0}code : (s) msg - error code:msg if fail".format('  ' * (doc_idt_cnt + 1)))
 
 
 def building():
@@ -191,8 +194,7 @@ def printing():
     fn_cur_num = 0
     for fn in functions:
         fn_cur_num += 1
-        #        code.append('{} {}'.format('#'*80, fn_cur_num))
-        code.append(glob_idnt + 'def {}(self{}):'.format(fn['definit']['name'], fn['definit']['params']))
+        code.append(glob_idnt + 'def {0}(self{1}):'.format(fn['definit']['name'], fn['definit']['params']))
         code.append(glob_idnt * 2 + fn['docstrings']['descript'])
         code.append(glob_idnt * 2 + '@params: ')
         if len(fn['docstrings']['params']):
@@ -207,8 +209,8 @@ def printing():
         else:
             code.append(glob_idnt * 2 + ':\tTrue if success')
         code.append(glob_idnt * 2 + '"""')
-        code.append(glob_idnt * 2 + 'if not self.urfa_call({}):'.format(fn['definit']['id']))
-        code.append(glob_idnt * 3 + 'raise Exception("Fail of urfa_call({}) [{}]")'.format(
+        code.append(glob_idnt * 2 + 'if not self.urfa_call({0}):'.format(fn['definit']['id']))
+        code.append(glob_idnt * 3 + 'raise Exception("Fail of urfa_call({0}) [{1}]")'.format(
             fn['definit']['id'], fn['definit']['name']))
         if len(fn['code']['input']):
             code.append(glob_idnt * 2 + '#--------- input')

@@ -42,6 +42,7 @@ def main():
   c.execute(sql,(minBalanse,))
 
   sent = u''
+
   for (uid,aid,uname,balance,tel,lastSend,sendOff) in c.fetchall():
     if sendOff: continue
     m = re.match(r'^(?:8|\+7)?([0-9]{10})',re.sub('-','',tel))

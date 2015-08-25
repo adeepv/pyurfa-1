@@ -150,7 +150,8 @@ class packet(object):
         elif type == U_TP_D:
             res = unpack('!d', self.data[self.iter])[0]
         elif type == U_TP_IP:
-            res = socket.inet_ntoa(self.data[self.iter])
+            if unpack('B', self.data[self.iter][0])[0] == 4:
+                res = socket.inet_ntoa(self.data[self.iter][1:])
         self.iter += 1
         return res
 

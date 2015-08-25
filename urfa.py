@@ -2,7 +2,7 @@
 
 """ main class of urfa-module """
 from urfa_connection import *
-
+from collections import defaultdict
 
 def blocked2ret(blockcode, retdict):
     if blockcode:
@@ -24,7 +24,6 @@ def blocked2ret(blockcode, retdict):
 class urfa_client(connection):
     """ URFA-client class - container of URFA-functions and interfase of URFA """
 
-    from collections import defaultdict
     def rpcf_liburfa_list(self):
         """ description
         @params: 
@@ -38,8 +37,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x0040):
             raise Exception("Fail of urfa_call(0x0040) [rpcf_liburfa_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -61,8 +60,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x0044):
             raise Exception("Fail of urfa_call(0x0044) [rpcf_liburfa_symtab]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -81,8 +80,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x0045):
             raise Exception("Fail of urfa_call(0x0045) [rpcf_core_version]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['core_version'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -96,8 +95,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x0046):
             raise Exception("Fail of urfa_call(0x0046) [rpcf_core_build]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['build'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -121,8 +120,8 @@ class urfa_client(connection):
         self.pck.add_data(params['type'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['status'] = self.pck.get_data(U_TP_I)
         ret['uptime'] = self.pck.get_data(U_TP_I)
         ret['uptime_last'] = self.pck.get_data(U_TP_I)
@@ -148,8 +147,8 @@ class urfa_client(connection):
         self.pck.add_data(params['secret_size'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['error'] = self.pck.get_data(U_TP_S)
         ret['secret'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
@@ -164,8 +163,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x0101):
             raise Exception("Fail of urfa_call(0x0101) [rpcf_get_system_currency]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['currency_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -186,8 +185,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         ret['name'] = self.pck.get_data(U_TP_S)
         ret['address'] = self.pck.get_data(U_TP_IP)
@@ -208,8 +207,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x1067):
             raise Exception("Fail of urfa_call(0x1067) [rpcf_get_ippools_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -309,8 +308,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x1070):
             raise Exception("Fail of urfa_call(0x1070) [rpcf_radius_get_active_sessions]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['traffic_sessions_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['traffic_sessions_count']): 
             self.pck.recv(self.sck)
@@ -322,6 +321,7 @@ class urfa_client(connection):
             ret['traf_last_update_date'][i] = self.pck.get_data(U_TP_I)
             ret['framed_ip4'][i] = self.pck.get_data(U_TP_IP)
             ret['framed_ip6'][i] = self.pck.get_data(U_TP_IP)
+        self.pck.recv(self.sck)
         ret['tel_sessions_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['tel_sessions_count']): 
             self.pck.recv(self.sck)
@@ -351,8 +351,8 @@ class urfa_client(connection):
         self.pck.add_data(params['nas_ip'], U_TP_IP)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['error_code'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -372,8 +372,8 @@ class urfa_client(connection):
         self.pck.add_data(params['nas_ip'], U_TP_IP)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['error_code'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -396,8 +396,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x1065):
             raise Exception("Fail of urfa_call(0x1065) [rpcf_radius_get_attributes_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['objects_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['objects_count']): 
             self.pck.recv(self.sck)
@@ -456,8 +456,8 @@ class urfa_client(connection):
             self.pck.add_data(params['pattern'][i], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['cards_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['cards_size']): 
             self.pck.recv(self.sck)
@@ -496,8 +496,8 @@ class urfa_client(connection):
         self.pck.add_data(params['fname'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['success'] = self.pck.get_data(U_TP_I)
         ret['total'] = self.pck.get_data(U_TP_I)
         ret['show_count'] = self.pck.get_data(U_TP_I)
@@ -587,8 +587,8 @@ class urfa_client(connection):
                         self.pck.add_data(params['pattern'][i], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['user_data_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['user_data_size']): 
             self.pck.recv(self.sck)
@@ -615,6 +615,7 @@ class urfa_client(connection):
                     if not i in ret['mask']:ret['mask'][i] = dict()
                     if not j in ret['mask'][i]:ret['mask'][i][j] = dict()
                     ret['mask'][i][j][x] = self.pck.get_data(U_TP_I)
+            self.pck.recv(self.sck)
             for z in range(len(params['pole_code_array'])): 
                 self.pck.recv(self.sck)
                 ret['pole_code']=params['pole_code_array'][z]
@@ -699,8 +700,8 @@ class urfa_client(connection):
         self.pck.add_data(params['card_user'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['cnt'] = self.pck.get_data(U_TP_I)
         for i in range(ret['cnt']): 
             self.pck.recv(self.sck)
@@ -727,6 +728,7 @@ class urfa_client(connection):
                     if not i in ret['group_type']:ret['group_type'][i] = dict()
                     if not j in ret['group_type'][i]:ret['group_type'][i][j] = dict()
                     ret['group_type'][i][j][x] = self.pck.get_data(U_TP_I)
+            self.pck.recv(self.sck)
             ret['user_int_status'][i] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -841,8 +843,8 @@ class urfa_client(connection):
             self.pck.add_data(params['parameter_value'][i], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['user_id'] = self.pck.get_data(U_TP_I)
         ret['error_msg'] = self.pck.get_data(U_TP_S)
         if params['user_id']  ==  0:
@@ -906,8 +908,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['user_id'] = self.pck.get_data(U_TP_I)
         if params['user_id']  ==  0:
             ret['error'] = dict({10:"user not found"})
@@ -916,6 +918,7 @@ class urfa_client(connection):
             self.pck.recv(self.sck)
             ret['account_id_array'][i] = self.pck.get_data(U_TP_I)
             ret['account_name_array'][i] = self.pck.get_data(U_TP_S)
+        self.pck.recv(self.sck)
         ret['login'] = self.pck.get_data(U_TP_S)
         ret['password'] = self.pck.get_data(U_TP_S)
         ret['basic_account'] = self.pck.get_data(U_TP_I)
@@ -970,8 +973,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['user_data_full_login'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -989,8 +992,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -1009,8 +1012,8 @@ class urfa_client(connection):
         self.pck.add_data(params['card_user'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -1037,8 +1040,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -1131,8 +1134,8 @@ class urfa_client(connection):
         self.pck.add_data(params['action'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -1181,8 +1184,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['user_id'] = self.pck.get_data(U_TP_I)
         if ret['user_id']  ==  0:
             ret['error'] = dict({19:"No such account linked with user"})
@@ -1210,8 +1213,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['is_blocked'] = self.pck.get_data(U_TP_I)
         ret['vat_rate'] = self.pck.get_data(U_TP_D)
         ret['sale_tax_rate'] = self.pck.get_data(U_TP_D)
@@ -1268,8 +1271,8 @@ class urfa_client(connection):
         self.pck.add_data(params['external_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['account_id'] = self.pck.get_data(U_TP_I)
         if ret['account_id']  ==  0:
             ret['error'] = dict({11:"unable to add account"})
@@ -1329,8 +1332,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -1352,8 +1355,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['ret_code'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -1369,8 +1372,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x2035):
             raise Exception("Fail of urfa_call(0x2035) [rpcf_get_sys_settings]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['block_recalc_abon'] = self.pck.get_data(U_TP_I)
         ret['block_recalc_prepaid'] = self.pck.get_data(U_TP_I)
         ret['default_vat_rate'] = self.pck.get_data(U_TP_D)
@@ -1409,8 +1412,8 @@ class urfa_client(connection):
         self.pck.add_data(params['tc_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['res'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -1435,8 +1438,8 @@ class urfa_client(connection):
         self.pck.add_data(params['which_service'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['services_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['services_count']): 
             self.pck.recv(self.sck)
@@ -1476,8 +1479,8 @@ class urfa_client(connection):
         self.pck.add_data(params['sid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_name'] = self.pck.get_data(U_TP_S)
         ret['comment'] = self.pck.get_data(U_TP_S)
         ret['link_by_default'] = self.pck.get_data(U_TP_I)
@@ -1529,8 +1532,8 @@ class urfa_client(connection):
         self.pck.add_data(params['sid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_name'] = self.pck.get_data(U_TP_S)
         ret['comment'] = self.pck.get_data(U_TP_S)
         ret['link_by_default'] = self.pck.get_data(U_TP_I)
@@ -1554,6 +1557,7 @@ class urfa_client(connection):
                     ret['border_id'][i][j] = self.pck.get_data(U_TP_L)
                     if not i in ret['border_cost']:ret['border_cost'][i] = dict()
                     ret['border_cost'][i][j] = self.pck.get_data(U_TP_D)
+        self.pck.recv(self.sck)
         ret['prepaid_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['prepaid_count']): 
             self.pck.recv(self.sck)
@@ -1561,11 +1565,13 @@ class urfa_client(connection):
             if ret['tclass'][i]  !=  -1:
                 ret['prepaid_amount'][i] = self.pck.get_data(U_TP_L)
                 ret['prepaid_max'][i] = self.pck.get_data(U_TP_L)
+        self.pck.recv(self.sck)
         ret['tclass_id2group_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['tclass_id2group_size']): 
             self.pck.recv(self.sck)
             ret['tclass_id'][i] = self.pck.get_data(U_TP_I)
             ret['tclass_group_id'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['service_data_parent_id'] = self.pck.get_data(U_TP_I)
         ret['tariff_id'] = self.pck.get_data(U_TP_I)
         ret['parent_id'] = self.pck.get_data(U_TP_I)
@@ -1664,8 +1670,8 @@ class urfa_client(connection):
             self.pck.add_data(params['id_p'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['sid'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -1705,8 +1711,8 @@ class urfa_client(connection):
         self.pck.add_data(params['sid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_name'] = self.pck.get_data(U_TP_S)
         ret['comment'] = self.pck.get_data(U_TP_S)
         ret['link_by_default'] = self.pck.get_data(U_TP_I)
@@ -1725,12 +1731,14 @@ class urfa_client(connection):
             self.pck.recv(self.sck)
             ret['allowed_net_id'][i] = self.pck.get_data(U_TP_I)
             ret['allowed_net_value'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['cost_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['cost_size']): 
             self.pck.recv(self.sck)
             ret['tr_time'][i] = self.pck.get_data(U_TP_S)
             ret['param1'][i] = self.pck.get_data(U_TP_D)
             ret['param2'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['service_data_parent_id'] = self.pck.get_data(U_TP_I)
         ret['tariff_id'] = self.pck.get_data(U_TP_I)
         ret['parent_id'] = self.pck.get_data(U_TP_I)
@@ -1756,8 +1764,8 @@ class urfa_client(connection):
         self.pck.add_data(params['sid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_name'] = self.pck.get_data(U_TP_S)
         ret['comment'] = self.pck.get_data(U_TP_S)
         ret['link_by_default'] = self.pck.get_data(U_TP_I)
@@ -1828,8 +1836,8 @@ class urfa_client(connection):
         self.pck.add_data(params['sid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_name'] = self.pck.get_data(U_TP_S)
         ret['comment'] = self.pck.get_data(U_TP_S)
         ret['link_by_default'] = self.pck.get_data(U_TP_I)
@@ -1850,6 +1858,7 @@ class urfa_client(connection):
             ret['tr_time'][i] = self.pck.get_data(U_TP_S)
             ret['param'][i] = self.pck.get_data(U_TP_D)
             ret['id'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['is_parent_id'] = self.pck.get_data(U_TP_I)
         ret['tariff_id'] = self.pck.get_data(U_TP_I)
         ret['parent_id'] = self.pck.get_data(U_TP_I)
@@ -1910,8 +1919,8 @@ class urfa_client(connection):
             self.pck.add_data(params['range_id'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -1944,8 +1953,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x210f):
             raise Exception("Fail of urfa_call(0x210f) [rpcf_get_hotspot_services_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['services_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['services_size']): 
             self.pck.recv(self.sck)
@@ -1970,8 +1979,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x2110):
             raise Exception("Fail of urfa_call(0x2110) [rpcf_get_fictive_services_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['services_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['services_size']): 
             self.pck.recv(self.sck)
@@ -2003,8 +2012,8 @@ class urfa_client(connection):
         self.pck.add_data(params['sid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_name'] = self.pck.get_data(U_TP_S)
         ret['comment'] = self.pck.get_data(U_TP_S)
         ret['link_by_default'] = self.pck.get_data(U_TP_I)
@@ -2078,8 +2087,8 @@ class urfa_client(connection):
         self.pck.add_data(params['expire_date'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -2227,8 +2236,8 @@ class urfa_client(connection):
             self.pck.add_data(params['quota'][i], U_TP_L)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slink_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -2298,8 +2307,8 @@ class urfa_client(connection):
             self.pck.add_data(params['gid'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -2330,8 +2339,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x10350):
             raise Exception("Fail of urfa_call(0x10350) [rpcf_get_time_ranges]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size_tr'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size_tr']): 
             self.pck.recv(self.sck)
@@ -2360,6 +2369,7 @@ class urfa_client(connection):
                 ret['wday_start'][i][j] = self.pck.get_data(U_TP_I)
                 if not i in ret['wday_stop']:ret['wday_stop'][i] = dict()
                 ret['wday_stop'][i][j] = self.pck.get_data(U_TP_I)
+            self.pck.recv(self.sck)
             ret['days_size'] = self.pck.get_data(U_TP_I)
             ret['days_size_array'][i]=ret['days_size']
             for j in range(ret['days_size']): 
@@ -2500,8 +2510,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x2300):
             raise Exception("Fail of urfa_call(0x2300) [rpcf_get_tclasses]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tclass_list_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['tclass_list_size']): 
             self.pck.recv(self.sck)
@@ -2643,8 +2653,8 @@ class urfa_client(connection):
         self.pck.add_data(params['tclass_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tclass_name'] = self.pck.get_data(U_TP_S)
         ret['graph_color'] = self.pck.get_data(U_TP_I)
         ret['is_display'] = self.pck.get_data(U_TP_I)
@@ -2781,8 +2791,8 @@ class urfa_client(connection):
         self.pck.add_data(params['tclass_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -2802,8 +2812,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['groups_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['groups_count']): 
             self.pck.recv(self.sck)
@@ -2858,8 +2868,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x2403):
             raise Exception("Fail of urfa_call(0x2403) [rpcf_get_sysgroups_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['groups_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['groups_size']): 
             self.pck.recv(self.sck)
@@ -2941,8 +2951,8 @@ class urfa_client(connection):
         self.pck.add_data(params['group_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['group_name'] = self.pck.get_data(U_TP_S)
         ret['group_info'] = self.pck.get_data(U_TP_S)
         ret['info_size'] = self.pck.get_data(U_TP_I)
@@ -3009,8 +3019,8 @@ class urfa_client(connection):
         self.pck.add_data(params['group_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['group_name'] = self.pck.get_data(U_TP_S)
         ret['user_id_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['user_id_size']): 
@@ -3046,8 +3056,8 @@ class urfa_client(connection):
             self.pck.add_data(params['new_policy'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['error_code'] = self.pck.get_data(U_TP_I)
         ret['error_msg'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
@@ -3081,8 +3091,8 @@ class urfa_client(connection):
         self.pck.add_data(params['group_name'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['group_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -3102,8 +3112,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['groups_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['groups_size']): 
             self.pck.recv(self.sck)
@@ -3145,8 +3155,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['discount_date'] = self.pck.get_data(U_TP_I)
         ret['quantity'] = self.pck.get_data(U_TP_D)
         ret['invoice_id'] = self.pck.get_data(U_TP_I)
@@ -3172,8 +3182,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x2600):
             raise Exception("Fail of urfa_call(0x2600) [rpcf_get_discount_periods]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['discount_periods_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['discount_periods_count']): 
             self.pck.recv(self.sck)
@@ -3205,8 +3215,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x2607):
             raise Exception("Fail of urfa_call(0x2607) [rpcf_get_all_discount_periods]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['discount_periods_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['discount_periods_count']): 
             self.pck.recv(self.sck)
@@ -3230,8 +3240,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x2601):
             raise Exception("Fail of urfa_call(0x2601) [rpcf_get_first_discount_period_id]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -3255,8 +3265,8 @@ class urfa_client(connection):
         self.pck.add_data(params['discount_period_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['start_date'] = self.pck.get_data(U_TP_I)
         ret['end_date'] = self.pck.get_data(U_TP_I)
         ret['periodic_type'] = self.pck.get_data(U_TP_I)
@@ -3323,8 +3333,8 @@ class urfa_client(connection):
         self.pck.add_data(params['invoice_month'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['discount_period_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -3364,8 +3374,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slink_id_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['slink_id_count']): 
             self.pck.recv(self.sck)
@@ -3412,8 +3422,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tariff_link_id'] = self.pck.get_data(U_TP_I)
         ret['is_blocked'] = self.pck.get_data(U_TP_I)
         ret['discount_period_id'] = self.pck.get_data(U_TP_I)
@@ -3463,8 +3473,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tariff_link_id'] = self.pck.get_data(U_TP_I)
         ret['is_blocked'] = self.pck.get_data(U_TP_I)
         ret['discount_period_id'] = self.pck.get_data(U_TP_I)
@@ -3486,6 +3496,7 @@ class urfa_client(connection):
             ret['ip_not_vpn'][i] = self.pck.get_data(U_TP_I)
             ret['dont_use_fw'][i] = self.pck.get_data(U_TP_I)
             ret['router_id'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['quotas_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['quotas_count']): 
             self.pck.recv(self.sck)
@@ -3540,8 +3551,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tariff_link_id'] = self.pck.get_data(U_TP_I)
         ret['is_blocked'] = self.pck.get_data(U_TP_I)
         ret['discount_period_id'] = self.pck.get_data(U_TP_I)
@@ -3573,6 +3584,7 @@ class urfa_client(connection):
             ret['port_id'][i] = self.pck.get_data(U_TP_I)
             ret['vlan_id'][i] = self.pck.get_data(U_TP_I)
             ret['pool_id'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['quotas_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['quotas_count']): 
             self.pck.recv(self.sck)
@@ -3607,8 +3619,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tariff_link_id'] = self.pck.get_data(U_TP_I)
         ret['is_blocked'] = self.pck.get_data(U_TP_I)
         ret['discount_period_id'] = self.pck.get_data(U_TP_I)
@@ -3638,8 +3650,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['discount_date'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -3672,8 +3684,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tariff_link_id'] = self.pck.get_data(U_TP_I)
         ret['is_blocked'] = self.pck.get_data(U_TP_I)
         ret['discount_period_id'] = self.pck.get_data(U_TP_I)
@@ -3704,8 +3716,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x2800):
             raise Exception("Fail of urfa_call(0x2800) [rpcf_get_ipzones_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['zones_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['zones_count']): 
             self.pck.recv(self.sck)
@@ -3738,8 +3750,8 @@ class urfa_client(connection):
             self.pck.add_data(params['gateaway'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -3768,8 +3780,8 @@ class urfa_client(connection):
             self.pck.add_data(params['gateaway'][i], U_TP_IP)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -3791,8 +3803,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['name'] = self.pck.get_data(U_TP_S)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
@@ -3820,8 +3832,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['name'] = self.pck.get_data(U_TP_S)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
@@ -3851,8 +3863,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x2810):
             raise Exception("Fail of urfa_call(0x2810) [rpcf_get_houses_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['houses_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['houses_size']): 
             self.pck.recv(self.sck)
@@ -3930,8 +3942,8 @@ class urfa_client(connection):
         self.pck.add_data(params['house_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['house_id'] = self.pck.get_data(U_TP_I)
         ret['connect_date'] = self.pck.get_data(U_TP_I)
         ret['post_code'] = self.pck.get_data(U_TP_S)
@@ -3966,14 +3978,15 @@ class urfa_client(connection):
         self.pck.add_data(params['house_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['ips_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['ips_size']): 
             self.pck.recv(self.sck)
             ret['ips_ip'][i] = self.pck.get_data(U_TP_IP)
             ret['mask'][i] = self.pck.get_data(U_TP_I)
             ret['zone_name'][i] = self.pck.get_data(U_TP_S)
+        self.pck.recv(self.sck)
         ret['error'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -3992,8 +4005,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x15102):
             raise Exception("Fail of urfa_call(0x15102) [rpcf_get_charge_policy_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['policy_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['policy_count']): 
             self.pck.recv(self.sck)
@@ -4028,8 +4041,8 @@ class urfa_client(connection):
             self.pck.add_data(params['timemark'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -4056,8 +4069,8 @@ class urfa_client(connection):
             self.pck.add_data(params['timemark'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -4075,8 +4088,8 @@ class urfa_client(connection):
         self.pck.add_data(params['policy_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -4096,8 +4109,8 @@ class urfa_client(connection):
         self.pck.add_data(params['policy_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -4115,8 +4128,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['charge_policy'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -4143,8 +4156,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if ret['result']  !=  -1:
             ret['is_active'] = self.pck.get_data(U_TP_I)
@@ -4170,8 +4183,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x2814):
             raise Exception("Fail of urfa_call(0x2814) [rpcf_get_ip_mac]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['ip_mac_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['ip_mac_size']): 
             self.pck.recv(self.sck)
@@ -4211,8 +4224,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x292e):
             raise Exception("Fail of urfa_call(0x292e) [rpcf_get_ipgroups_list_ipv6]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['groups_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['groups_size']): 
             self.pck.recv(self.sck)
@@ -4252,8 +4265,8 @@ class urfa_client(connection):
         self.pck.add_data(params['ipgroup_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['name'] = self.pck.get_data(U_TP_S)
         ret['ipzone_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['ipzone_count']): 
@@ -4278,8 +4291,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x2910):
             raise Exception("Fail of urfa_call(0x2910) [rpcf_get_currency_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['currency_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['currency_size']): 
             self.pck.recv(self.sck)
@@ -4356,8 +4369,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -4380,8 +4393,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['rate'] = self.pck.get_data(U_TP_D)
         ret['error'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
@@ -4439,8 +4452,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for j in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -4502,8 +4515,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for j in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -4565,8 +4578,8 @@ class urfa_client(connection):
         self.pck.add_data(params['show_all'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -4632,8 +4645,8 @@ class urfa_client(connection):
         self.pck.add_data(params['show_all'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -4683,8 +4696,8 @@ class urfa_client(connection):
         self.pck.add_data(params['unprepay'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -4702,8 +4715,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -4740,8 +4753,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['accounts_size']): 
             self.pck.recv(self.sck)
@@ -4787,8 +4800,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['rows_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['rows_count']): 
             self.pck.recv(self.sck)
@@ -4843,8 +4856,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['bytes_in_kbyte'] = self.pck.get_data(U_TP_D)
         ret['users_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['users_count']): 
@@ -4892,8 +4905,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x3024):
             raise Exception("Fail of urfa_call(0x3024) [rpcf_get_tariffs_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tariffs_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['tariffs_count']): 
             self.pck.recv(self.sck)
@@ -4941,8 +4954,8 @@ class urfa_client(connection):
         self.pck.add_data(params['tariff_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tariff_name'] = self.pck.get_data(U_TP_S)
         ret['tariff_create_date'] = self.pck.get_data(U_TP_I)
         ret['who_create'] = self.pck.get_data(U_TP_I)
@@ -4984,8 +4997,8 @@ class urfa_client(connection):
         self.pck.add_data(params['balance_rollover'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tp_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -5011,8 +5024,8 @@ class urfa_client(connection):
         self.pck.add_data(params['balance_rollover'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tp_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -5032,8 +5045,8 @@ class urfa_client(connection):
         self.pck.add_data(params['sid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -5058,8 +5071,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['user_tariffs_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['user_tariffs_size']): 
             self.pck.recv(self.sck)
@@ -5100,8 +5113,8 @@ class urfa_client(connection):
         self.pck.add_data(params['change_now'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tariff_link_id'] = self.pck.get_data(U_TP_I)
         if params['tariff_link_id']  ==  0:
             ret['error'] = dict({13:"unable to link user tariff"})
@@ -5155,8 +5168,8 @@ class urfa_client(connection):
         self.pck.add_data(params['unused'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['service_size']): 
             self.pck.recv(self.sck)
@@ -5182,8 +5195,8 @@ class urfa_client(connection):
         self.pck.add_data(params['tid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -5205,8 +5218,8 @@ class urfa_client(connection):
         self.pck.add_data(params['aid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['th_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['th_count']): 
             self.pck.recv(self.sck)
@@ -5230,8 +5243,8 @@ class urfa_client(connection):
         self.pck.add_data(params['name'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tid'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -5279,8 +5292,8 @@ class urfa_client(connection):
         self.pck.add_data(params['end_date'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -5313,8 +5326,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x3100):
             raise Exception("Fail of urfa_call(0x3100) [rpcf_get_payment_methods_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['payments_list_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['payments_list_count']): 
             self.pck.recv(self.sck)
@@ -5399,8 +5412,8 @@ class urfa_client(connection):
         self.pck.add_data(params['turn_on_inet'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['payment_transaction_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -5463,8 +5476,8 @@ class urfa_client(connection):
         self.pck.add_data(params['hash'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['payment_transaction_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -5501,8 +5514,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -5544,12 +5557,13 @@ class urfa_client(connection):
         self.pck.add_data(params['pool_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['cpi_owners_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['cpi_owners_size']): 
             self.pck.recv(self.sck)
             ret['owners'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['info_size'] = self.pck.get_data(U_TP_I)
         ret['time0'] = self.pck.get_data(U_TP_I)
         for i in range(ret['info_size']): 
@@ -5581,8 +5595,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x4201):
             raise Exception("Fail of urfa_call(0x4201) [rpcf_card_pool_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['info_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['info_size']): 
             self.pck.recv(self.sck)
@@ -5675,8 +5689,8 @@ class urfa_client(connection):
         self.pck.add_data(params['card_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -5694,8 +5708,8 @@ class urfa_client(connection):
         self.pck.add_data(params['card_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -5709,8 +5723,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x4206):
             raise Exception("Fail of urfa_call(0x4206) [rpcf_move_expired_cards]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -5761,8 +5775,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x4400):
             raise Exception("Fail of urfa_call(0x4400) [rpcf_get_settings_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['values_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['values_size']): 
             self.pck.recv(self.sck)
@@ -5843,8 +5857,8 @@ class urfa_client(connection):
         self.pck.add_data(params['variable'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['values_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['values_count']): 
             self.pck.recv(self.sck)
@@ -5867,8 +5881,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x4413):
             raise Exception("Fail of urfa_call(0x4413) [rpcf_get_sys_users_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['info_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['info_size']): 
             self.pck.recv(self.sck)
@@ -5911,8 +5925,8 @@ class urfa_client(connection):
             self.pck.add_data(params['group_id'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -5947,8 +5961,8 @@ class urfa_client(connection):
             self.pck.add_data(params['group_id'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -5966,8 +5980,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['login'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -5993,8 +6007,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['login'] = self.pck.get_data(U_TP_S)
         ret['ip4'] = self.pck.get_data(U_TP_IP)
         ret['mask4'] = self.pck.get_data(U_TP_I)
@@ -6035,8 +6049,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x4417):
             raise Exception("Fail of urfa_call(0x4417) [rpcf_whoami]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['my_uid'] = self.pck.get_data(U_TP_I)
         ret['login'] = self.pck.get_data(U_TP_S)
         ret['user_ip4'] = self.pck.get_data(U_TP_IP)
@@ -6049,12 +6063,14 @@ class urfa_client(connection):
             ret['system_group_id'][i] = self.pck.get_data(U_TP_I)
             ret['system_group_name'][i] = self.pck.get_data(U_TP_S)
             ret['system_group_info'][i] = self.pck.get_data(U_TP_S)
+        self.pck.recv(self.sck)
         ret['allowed_fids_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['allowed_fids_size']): 
             self.pck.recv(self.sck)
             ret['id'][i] = self.pck.get_data(U_TP_I)
             ret['name'][i] = self.pck.get_data(U_TP_S)
             ret['module'][i] = self.pck.get_data(U_TP_S)
+        self.pck.recv(self.sck)
         ret['not_allowed_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['not_allowed_size']): 
             self.pck.recv(self.sck)
@@ -6077,8 +6093,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x440b):
             raise Exception("Fail of urfa_call(0x440b) [rpcf_get_uaparam_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['uparam_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['uparam_size']): 
             self.pck.recv(self.sck)
@@ -6186,8 +6202,8 @@ class urfa_client(connection):
         self.pck.add_data(params['deprecated'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['message_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['message_size']): 
             self.pck.recv(self.sck)
@@ -6242,8 +6258,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x5043):
             raise Exception("Fail of urfa_call(0x5043) [rpcf_get_routers_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['routers_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['routers_size']): 
             self.pck.recv(self.sck)
@@ -6317,8 +6333,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x5010):
             raise Exception("Fail of urfa_call(0x5010) [rpcf_get_version_info]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['name'] = self.pck.get_data(U_TP_S)
         ret['country'] = self.pck.get_data(U_TP_S)
         ret['region'] = self.pck.get_data(U_TP_S)
@@ -6346,8 +6362,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x5040):
             raise Exception("Fail of urfa_call(0x5040) [rpcf_get_nas_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['nas_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['nas_size']): 
             self.pck.recv(self.sck)
@@ -6395,8 +6411,8 @@ class urfa_client(connection):
             self.pck.add_data(params['value'][i], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -6436,8 +6452,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['nf5a_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['nf5a_size']): 
             self.pck.recv(self.sck)
@@ -6505,8 +6521,8 @@ class urfa_client(connection):
         self.pck.add_data(params['t_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['dhs_log_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['dhs_log_size']): 
             self.pck.recv(self.sck)
@@ -6568,8 +6584,8 @@ class urfa_client(connection):
         self.pck.add_data(params['t_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['lases_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['lases_size']): 
             self.pck.recv(self.sck)
@@ -6638,8 +6654,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['dhs_log_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['dhs_log_size']): 
             self.pck.recv(self.sck)
@@ -6737,8 +6753,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['nas_id'] = self.pck.get_data(U_TP_S)
         ret['auth_secret'] = self.pck.get_data(U_TP_S)
         ret['acct_secret'] = self.pck.get_data(U_TP_S)
@@ -6812,8 +6828,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tariff_link_id'] = self.pck.get_data(U_TP_I)
         ret['is_blocked'] = self.pck.get_data(U_TP_I)
         ret['discount_period_id'] = self.pck.get_data(U_TP_I)
@@ -6849,8 +6865,8 @@ class urfa_client(connection):
         self.pck.add_data(params['dst_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -6882,14 +6898,15 @@ class urfa_client(connection):
         self.pck.add_data(params['t_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['account_id'] = self.pck.get_data(U_TP_I)
         ret['graph_data_size'] = self.pck.get_data(U_TP_I)
         if ret['graph_data_size']  !=  0:
             for i in range(ret['graph_data_size']): 
                 self.pck.recv(self.sck)
                 ret['graph_param'][i] = self.pck.get_data(U_TP_I)
+            self.pck.recv(self.sck)
             ret['st_size'] = self.pck.get_data(U_TP_I)
             for i in range(ret['st_size']): 
                 self.pck.recv(self.sck)
@@ -6924,8 +6941,8 @@ class urfa_client(connection):
         self.pck.add_data(params['t_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['traffic_discount_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['traffic_discount_size']): 
             self.pck.recv(self.sck)
@@ -6964,8 +6981,8 @@ class urfa_client(connection):
         self.pck.add_data(params['t_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['gdata_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['gdata_size']): 
             self.pck.recv(self.sck)
@@ -7004,8 +7021,8 @@ class urfa_client(connection):
         self.pck.add_data(params['t_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['gdata_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['gdata_size']): 
             self.pck.recv(self.sck)
@@ -7036,8 +7053,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['error_code'] = self.pck.get_data(U_TP_I)
         if ret['error_code']  !=  0:
             ret['error'] = dict({13:"unable to delete service link"})
@@ -7061,8 +7078,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['bytes_in_mbyte'] = self.pck.get_data(U_TP_I)
         ret['pinfo_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['pinfo_size']): 
@@ -7140,8 +7157,8 @@ class urfa_client(connection):
             self.pck.add_data(params['kschet'][i], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -7160,8 +7177,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x6002):
             raise Exception("Fail of urfa_call(0x6002) [rpcf_get_banks]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['banks_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['banks_size']): 
             self.pck.recv(self.sck)
@@ -7209,8 +7226,8 @@ class urfa_client(connection):
         self.pck.add_data(params['doc_text'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -7238,8 +7255,8 @@ class urfa_client(connection):
         self.pck.add_data(params['doc_text'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -7262,8 +7279,8 @@ class urfa_client(connection):
         self.pck.add_data(params['doc_type_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -7290,8 +7307,8 @@ class urfa_client(connection):
         self.pck.add_data(params['doc_template_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if ret['id']  !=  0:
             ret['doc_text'] = self.pck.get_data(U_TP_S)
@@ -7310,8 +7327,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x7024):
             raise Exception("Fail of urfa_call(0x7024) [rpcf_get_doc_types_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -7350,8 +7367,8 @@ class urfa_client(connection):
         self.pck.add_data(params['doc_templ_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -7371,8 +7388,8 @@ class urfa_client(connection):
         self.pck.add_data(params['doc_text'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -7393,14 +7410,15 @@ class urfa_client(connection):
         self.pck.add_data(params['doc_data_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if ret['id']  !=  0:
             ret['text_count'] = self.pck.get_data(U_TP_I)
             for i in range(ret['text_count']): 
                 self.pck.recv(self.sck)
                 ret['dynamic_text'][i] = self.pck.get_data(U_TP_S)
+            self.pck.recv(self.sck)
             ret['landscape'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -7423,8 +7441,8 @@ class urfa_client(connection):
         self.pck.add_data(params['aid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['ret_code_count'] = self.pck.get_data(U_TP_I)
         if ret['ret_code_count']  !=  -1:
             for i in range(ret['ret_code_count']): 
@@ -7450,8 +7468,8 @@ class urfa_client(connection):
         self.pck.add_data(params['doc_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -7469,8 +7487,8 @@ class urfa_client(connection):
         self.pck.add_data(params['doc_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -7495,8 +7513,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['ret_code_count'] = self.pck.get_data(U_TP_I)
         if ret['ret_code_count']  !=  -1:
             for i in range(ret['ret_code_count']): 
@@ -7522,8 +7540,8 @@ class urfa_client(connection):
         self.pck.add_data(params['doc_type'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['vendor_doc_text'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -7580,8 +7598,8 @@ class urfa_client(connection):
         self.pck.add_data(params['gid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accts_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['accts_size']): 
             self.pck.recv(self.sck)
@@ -7664,6 +7682,7 @@ class urfa_client(connection):
                     if not i in ret['tax']:ret['tax'][i] = dict()
                     if not j in ret['tax'][i]:ret['tax'][i][j] = dict()
                     ret['tax'][i][j][x] = self.pck.get_data(U_TP_D)
+                self.pck.recv(self.sck)
                 if ret['entry_size']  !=  0:
                     if not i in ret['total_sum']:ret['total_sum'][i] = dict()
                     ret['total_sum'][i][j] = self.pck.get_data(U_TP_D)
@@ -7699,8 +7718,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['accounts_size']): 
             self.pck.recv(self.sck)
@@ -7741,8 +7760,8 @@ class urfa_client(connection):
         self.pck.add_data(params['code'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_D)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -7792,8 +7811,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         ret['name'] = self.pck.get_data(U_TP_S)
         ret['short_name'] = self.pck.get_data(U_TP_S)
@@ -7825,8 +7844,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x8019):
             raise Exception("Fail of urfa_call(0x8019) [rpcf_get_suppliers_zones]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['ret_code'] = self.pck.get_data(U_TP_I)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
@@ -7858,8 +7877,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['basic_account'] = self.pck.get_data(U_TP_I)
         ret['login'] = self.pck.get_data(U_TP_S)
         ret['password'] = self.pck.get_data(U_TP_S)
@@ -7896,8 +7915,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['invoice_sup_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -7943,8 +7962,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size_tp'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size_tp']): 
             self.pck.recv(self.sck)
@@ -7999,8 +8018,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x9002):
             raise Exception("Fail of urfa_call(0x9002) [rpcf_get_tech_param_type]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -8026,8 +8045,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -8057,8 +8076,8 @@ class urfa_client(connection):
         self.pck.add_data(params['passwd'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -8086,8 +8105,8 @@ class urfa_client(connection):
         self.pck.add_data(params['passwd'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -8109,8 +8128,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count_of_sets'] = self.pck.get_data(U_TP_I)
         if ret['count_of_sets']  !=  0:
             ret['num_of_type_of_sets'] = self.pck.get_data(U_TP_I)
@@ -8140,8 +8159,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -8196,8 +8215,8 @@ class urfa_client(connection):
         self.pck.add_data(params['sid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['cost'] = self.pck.get_data(U_TP_D)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -8215,8 +8234,8 @@ class urfa_client(connection):
         self.pck.add_data(params['sid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['links_count'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -8230,8 +8249,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x10002):
             raise Exception("Fail of urfa_call(0x10002) [rpcf_get_bytes_in_kb]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['bytes_in_kb'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -8294,8 +8313,8 @@ class urfa_client(connection):
         self.pck.add_data(params['st'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['radius_data_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['radius_data_size']): 
             self.pck.recv(self.sck)
@@ -8343,8 +8362,8 @@ class urfa_client(connection):
             self.pck.add_data(params['sum_cost'][i], U_TP_D)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -8386,8 +8405,8 @@ class urfa_client(connection):
         self.pck.add_data(params['dir_type'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['dir_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -8431,8 +8450,8 @@ class urfa_client(connection):
         self.pck.add_data(params['dir_type'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['dir_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -8450,8 +8469,8 @@ class urfa_client(connection):
         self.pck.add_data(params['dir_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['dir_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -8471,8 +8490,8 @@ class urfa_client(connection):
         self.pck.add_data(params['zone_type'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['zone_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -8494,8 +8513,8 @@ class urfa_client(connection):
         self.pck.add_data(params['zone_type'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['zone_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -8513,8 +8532,8 @@ class urfa_client(connection):
         self.pck.add_data(params['zone_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['zone_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -8545,8 +8564,8 @@ class urfa_client(connection):
         self.pck.add_data(params['dir_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['dir_id'] = self.pck.get_data(U_TP_I)
         if params['dir_id']  !=  -1:
             ret['zone_id'] = self.pck.get_data(U_TP_I)
@@ -8585,8 +8604,8 @@ class urfa_client(connection):
         self.pck.add_data(params['zone_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['zone_id'] = self.pck.get_data(U_TP_I)
         if params['zone_id']  !=  -1:
             ret['supplier_id'] = self.pck.get_data(U_TP_I)
@@ -8629,8 +8648,8 @@ class urfa_client(connection):
             self.pck.add_data(params['skip_id'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['dir_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['dir_count']): 
             self.pck.recv(self.sck)
@@ -8661,8 +8680,8 @@ class urfa_client(connection):
             self.pck.add_data(params['skip_id'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -8706,8 +8725,8 @@ class urfa_client(connection):
         self.pck.add_data(params['count'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['dir_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['dir_count']): 
             self.pck.recv(self.sck)
@@ -8749,8 +8768,8 @@ class urfa_client(connection):
             self.pck.add_data(params['skip_id'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -8769,8 +8788,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x10309):
             raise Exception("Fail of urfa_call(0x10309) [rpcf_tel_zones_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['zone_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['zone_count']): 
             self.pck.recv(self.sck)
@@ -8848,8 +8867,8 @@ class urfa_client(connection):
         self.pck.add_data(params['min_charge'], U_TP_D)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -8922,8 +8941,8 @@ class urfa_client(connection):
         self.pck.add_data(params['min_charge'], U_TP_D)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -8967,8 +8986,8 @@ class urfa_client(connection):
         self.pck.add_data(params['sid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_id'] = self.pck.get_data(U_TP_I)
         ret['parent_id'] = self.pck.get_data(U_TP_I)
         ret['tariff_id'] = self.pck.get_data(U_TP_I)
@@ -8990,6 +9009,7 @@ class urfa_client(connection):
                 ret['border'][i][j] = self.pck.get_data(U_TP_I)
                 if not i in ret['cost_mult']:ret['cost_mult'][i] = dict()
                 ret['cost_mult'][i][j] = self.pck.get_data(U_TP_D)
+            self.pck.recv(self.sck)
             ret['timerange_count'] = self.pck.get_data(U_TP_I)
             for j in range(ret['timerange_count']): 
                 self.pck.recv(self.sck)
@@ -8997,8 +9017,10 @@ class urfa_client(connection):
                 ret['timerange_id'][i][j] = self.pck.get_data(U_TP_I)
                 if not i in ret['cost']:ret['cost'][i] = dict()
                 ret['cost'][i][j] = self.pck.get_data(U_TP_D)
+            self.pck.recv(self.sck)
             ret['prepaid_array'][i] = self.pck.get_data(U_TP_I)
             ret['fixed_cost_array'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['free_time'] = self.pck.get_data(U_TP_I)
         ret['first_period_length'] = self.pck.get_data(U_TP_I)
         ret['first_period_step'] = self.pck.get_data(U_TP_I)
@@ -9058,8 +9080,8 @@ class urfa_client(connection):
             self.pck.add_data(params['allowed_cid'][i], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slink_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -9102,8 +9124,8 @@ class urfa_client(connection):
             self.pck.add_data(params['allowed_cid'][i], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slinkId'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -9134,8 +9156,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slinkId'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounting_period_id'] = self.pck.get_data(U_TP_I)
         ret['start_date'] = self.pck.get_data(U_TP_I)
         ret['expire_date'] = self.pck.get_data(U_TP_I)
@@ -9151,6 +9173,7 @@ class urfa_client(connection):
             ret['pbx_id'][i] = self.pck.get_data(U_TP_S)
             ret['password'][i] = self.pck.get_data(U_TP_S)
             ret['allowed_cid'][i] = self.pck.get_data(U_TP_S)
+        self.pck.recv(self.sck)
         ret['slinkId'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -9208,8 +9231,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x10319):
             raise Exception("Fail of urfa_call(0x10319) [rpcf_get_tel_number_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -9246,8 +9269,8 @@ class urfa_client(connection):
             self.pck.add_data(params['dir'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         ret['founded_dir_id'] = self.pck.get_data(U_TP_I)
         ret['founded_zone_id'] = self.pck.get_data(U_TP_I)
@@ -9266,8 +9289,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x8023):
             raise Exception("Fail of urfa_call(0x8023) [rpcf_get_tel_suppliers_directions]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['dirs_cnt'] = self.pck.get_data(U_TP_I)
         for i in range(ret['dirs_cnt']): 
             self.pck.recv(self.sck)
@@ -9286,8 +9309,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x11112):
             raise Exception("Fail of urfa_call(0x11112) [rpcf_get_core_time]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['time'] = self.pck.get_data(U_TP_I)
         ret['tzname'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
@@ -9306,8 +9329,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x5502):
             raise Exception("Fail of urfa_call(-0x5502) [rpcf_user5_get_unused_prepaid]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['bytes_in_mbyte'] = self.pck.get_data(U_TP_I)
         ret['links_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['links_size']): 
@@ -9360,8 +9383,8 @@ class urfa_client(connection):
         self.pck.add_data(params['secret'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if ret['result']  ==  0:
             ret['error'] = self.pck.get_data(U_TP_S)
@@ -9392,8 +9415,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['accounts_size']): 
             self.pck.recv(self.sck)
@@ -9432,8 +9455,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x4055):
             raise Exception("Fail of urfa_call(-0x4055) [rpcf_user5_get_accounts]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['accounts_size']): 
             self.pck.recv(self.sck)
@@ -9456,8 +9479,8 @@ class urfa_client(connection):
         self.pck.add_data(params['tariff_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tariff_name'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -9471,8 +9494,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x4038):
             raise Exception("Fail of urfa_call(-0x4038) [rpcf_user5_get_remaining_prepaid_traffic]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -9491,8 +9514,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x4037):
             raise Exception("Fail of urfa_call(-0x4037) [rpcf_user5_get_currency_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['currency_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['currency_size']): 
             self.pck.recv(self.sck)
@@ -9545,8 +9568,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_start'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['time_end'] = self.pck.get_data(U_TP_I)
         ret['messages_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['messages_size']): 
@@ -9581,8 +9604,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['messages_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['messages_size']): 
             self.pck.recv(self.sck)
@@ -9627,8 +9650,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['nf5a_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['nf5a_size']): 
             self.pck.recv(self.sck)
@@ -9686,8 +9709,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         ret['begin'] = self.pck.get_data(U_TP_I)
         ret['end'] = self.pck.get_data(U_TP_I)
@@ -9717,8 +9740,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_type'] = self.pck.get_data(U_TP_I)
         ret['service_id'] = self.pck.get_data(U_TP_I)
         ret['service_name'] = self.pck.get_data(U_TP_S)
@@ -9741,8 +9764,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x4029):
             raise Exception("Fail of urfa_call(-0x4029) [rpcf_user5_tpayment]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['is_exist'] = self.pck.get_data(U_TP_I)
         if ret['is_exist']  !=  0:
             ret['first_payment_time'] = self.pck.get_data(U_TP_I)
@@ -9771,8 +9794,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_start'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['time_end'] = self.pck.get_data(U_TP_I)
         ret['messages_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['messages_size']): 
@@ -9807,8 +9830,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x4027):
             raise Exception("Fail of urfa_call(-0x4027) [rpcf_user5_get_prepaid_and_downloaded]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['bytes_in_mbyte'] = self.pck.get_data(U_TP_I)
         for i in range(1000): 
             self.pck.recv(self.sck)
@@ -9827,6 +9850,7 @@ class urfa_client(connection):
                         ret['old_prepaid_array'][i][j] = self.pck.get_data(U_TP_L)
                     if ret['unk2']  ==  0:
                         break
+                self.pck.recv(self.sck)
                 for j in range(1000): 
                     self.pck.recv(self.sck)
                     ret['unk2'] = self.pck.get_data(U_TP_I)
@@ -9839,6 +9863,7 @@ class urfa_client(connection):
                         ret['prepaid_array'][i][j] = self.pck.get_data(U_TP_L)
                     if ret['unk2']  ==  0:
                         break
+                self.pck.recv(self.sck)
                 for j in range(1000): 
                     self.pck.recv(self.sck)
                     ret['unk2'] = self.pck.get_data(U_TP_I)
@@ -9866,8 +9891,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x4026):
             raise Exception("Fail of urfa_call(-0x4026) [rpcf_user5_brief_report_for_wintray]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['user_int_status'] = self.pck.get_data(U_TP_I)
         ret['balance'] = self.pck.get_data(U_TP_D)
         if self.pck.recv(self.sck): return ret
@@ -9894,8 +9919,8 @@ class urfa_client(connection):
         self.pck.add_data(params['new_password_ret'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['status'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -9944,8 +9969,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_type'] = self.pck.get_data(U_TP_I)
         ret['service_id'] = self.pck.get_data(U_TP_I)
         ret['service_name'] = self.pck.get_data(U_TP_S)
@@ -9959,11 +9984,13 @@ class urfa_client(connection):
                 self.pck.recv(self.sck)
                 ret['tclass'][i] = self.pck.get_data(U_TP_S)
                 ret['downloaded'][i] = self.pck.get_data(U_TP_L)
+            self.pck.recv(self.sck)
             ret['iptsl_old_prepaid_size'] = self.pck.get_data(U_TP_I)
             for i in range(ret['iptsl_old_prepaid_size']): 
                 self.pck.recv(self.sck)
                 ret['tclass'][i] = self.pck.get_data(U_TP_S)
                 ret['prepaid'][i] = self.pck.get_data(U_TP_L)
+            self.pck.recv(self.sck)
             ret['ipgroup_size'] = self.pck.get_data(U_TP_I)
             for i in range(ret['ipgroup_size']): 
                 self.pck.recv(self.sck)
@@ -9971,6 +9998,7 @@ class urfa_client(connection):
                 ret['ip'][i] = self.pck.get_data(U_TP_IP)
                 ret['mask'][i] = self.pck.get_data(U_TP_I)
                 ret['login'][i] = self.pck.get_data(U_TP_S)
+            self.pck.recv(self.sck)
             ret['iptsd_borders_size'] = self.pck.get_data(U_TP_I)
             for i in range(ret['iptsd_borders_size']): 
                 self.pck.recv(self.sck)
@@ -9978,6 +10006,7 @@ class urfa_client(connection):
                 ret['bytes'][i] = self.pck.get_data(U_TP_L)
                 ret['cost1'][i] = self.pck.get_data(U_TP_D)
                 ret['group_type'][i] = self.pck.get_data(U_TP_I)
+            self.pck.recv(self.sck)
             ret['iptsd_prepaid_size'] = self.pck.get_data(U_TP_I)
             for i in range(ret['iptsd_prepaid_size']): 
                 self.pck.recv(self.sck)
@@ -10014,8 +10043,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x4023):
             raise Exception("Fail of urfa_call(-0x4023) [rpcf_user5_get_services]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['links_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['links_size']): 
             self.pck.recv(self.sck)
@@ -10048,8 +10077,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x402f):
             raise Exception("Fail of urfa_call(-0x402f) [rpcf_user5_get_services_ex]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['links_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['links_size']): 
             self.pck.recv(self.sck)
@@ -10084,8 +10113,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x4022):
             raise Exception("Fail of urfa_call(-0x4022) [rpcf_user5_get_invoice_data]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['full_name'] = self.pck.get_data(U_TP_S)
         ret['actual_address'] = self.pck.get_data(U_TP_S)
         ret['juridical_address'] = self.pck.get_data(U_TP_S)
@@ -10117,8 +10146,8 @@ class urfa_client(connection):
         self.pck.add_data(params['new_password_ret'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -10136,8 +10165,8 @@ class urfa_client(connection):
         self.pck.add_data(params['name'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -10152,8 +10181,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x401c):
             raise Exception("Fail of urfa_call(-0x401c) [rpcf_user5_get_user_group_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['groups_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['groups_count']): 
             self.pck.recv(self.sck)
@@ -10174,8 +10203,8 @@ class urfa_client(connection):
         self.pck.add_data(params['name'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -10193,8 +10222,8 @@ class urfa_client(connection):
         self.pck.add_data(params['name'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tid'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -10222,8 +10251,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['unused'] = self.pck.get_data(U_TP_I)
         ret['unused'][i] = self.pck.get_data(U_TP_I)
         ret['bytes_in_kbyte'][i] = self.pck.get_data(U_TP_D)
@@ -10286,8 +10315,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['dhs_log_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['dhs_log_size']): 
             self.pck.recv(self.sck)
@@ -10365,8 +10394,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['messages_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['messages_size']): 
             self.pck.recv(self.sck)
@@ -10398,8 +10427,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['blocks_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['blocks_size']): 
             self.pck.recv(self.sck)
@@ -10437,8 +10466,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for j in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -10489,8 +10518,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['aids_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['aids_size']): 
             self.pck.recv(self.sck)
@@ -10543,8 +10572,8 @@ class urfa_client(connection):
         self.pck.add_data(params['unused'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['unused'] = self.pck.get_data(U_TP_I)
         ret['unused'][i] = self.pck.get_data(U_TP_I)
         ret['bytes_in_kbyte'][i] = self.pck.get_data(U_TP_D)
@@ -10593,8 +10622,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['unused'] = self.pck.get_data(U_TP_I)
         ret['bytes_in_kbyte'] = self.pck.get_data(U_TP_D)
         ret['rows_count'] = self.pck.get_data(U_TP_I)
@@ -10660,8 +10689,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x4052):
             raise Exception("Fail of urfa_call(-0x4052) [rpcf_user5_get_user_info]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['user_id'] = self.pck.get_data(U_TP_I)
         ret['login'] = self.pck.get_data(U_TP_S)
         ret['basic_account'] = self.pck.get_data(U_TP_I)
@@ -10707,8 +10736,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['remaining_seconds'] = self.pck.get_data(U_TP_I)
         ret['downloaded_seconds'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
@@ -10728,8 +10757,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['traffic_remaining_mb'] = self.pck.get_data(U_TP_D)
         ret['traffic_downloaded_mb'] = self.pck.get_data(U_TP_D)
         if self.pck.recv(self.sck): return ret
@@ -10744,8 +10773,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x0045):
             raise Exception("Fail of urfa_call(-0x0045) [rpcf_core_version_user]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['version'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -10768,8 +10797,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x5020):
             raise Exception("Fail of urfa_call(0x5020) [rpcf_get_fwrules_list_new]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['rules_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['rules_count']): 
             self.pck.recv(self.sck)
@@ -10812,8 +10841,8 @@ class urfa_client(connection):
         self.pck.add_data(params['comment'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['rule_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -10847,8 +10876,8 @@ class urfa_client(connection):
         self.pck.add_data(params['comment'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -10866,8 +10895,8 @@ class urfa_client(connection):
         self.pck.add_data(params['rule_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -10894,8 +10923,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x14001):
             raise Exception("Fail of urfa_call(0x14001) [rpcf_ic_get_settings]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['send_users'] = self.pck.get_data(U_TP_I)
         ret['send_inv'] = self.pck.get_data(U_TP_I)
         ret['send_payments'] = self.pck.get_data(U_TP_I)
@@ -10952,8 +10981,8 @@ class urfa_client(connection):
         self.pck.add_data(params['sync_payments_till'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -10981,8 +11010,8 @@ class urfa_client(connection):
         self.pck.add_data(params['end_date'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -11022,8 +11051,8 @@ class urfa_client(connection):
         self.pck.add_data(params['end_date'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -11055,8 +11084,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x2122):
             raise Exception("Fail of urfa_call(0x2122) [rpcf_get_license_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['lic_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['lic_count']): 
             self.pck.recv(self.sck)
@@ -11087,8 +11116,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x2123):
             raise Exception("Fail of urfa_call(0x2123) [rpcf_get_session_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -11115,8 +11144,8 @@ class urfa_client(connection):
         self.pck.add_data(params['new_pass'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -11238,8 +11267,8 @@ class urfa_client(connection):
         self.pck.add_data(params['int_status'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['user_id'] = self.pck.get_data(U_TP_I)
         if ret['user_id']  ==  0:
             ret['error_code'] = self.pck.get_data(U_TP_I)
@@ -11343,8 +11372,8 @@ class urfa_client(connection):
             self.pck.add_data(params['parameter_value'][i], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['user_id'] = self.pck.get_data(U_TP_I)
         if params['user_id']  ==  0:
             ret['error_code'] = self.pck.get_data(U_TP_I)
@@ -11363,8 +11392,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x212a):
             raise Exception("Fail of urfa_call(0x212a) [rpcf_get_tray_settings]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -11391,8 +11420,8 @@ class urfa_client(connection):
             self.pck.add_data(params['value'][i], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -11408,8 +11437,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x212c):
             raise Exception("Fail of urfa_call(0x212c) [rpcf_get_cashier_settings]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -11436,8 +11465,8 @@ class urfa_client(connection):
             self.pck.add_data(params['value'][i], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -11453,8 +11482,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x403a):
             raise Exception("Fail of urfa_call(-0x403a) [rpcf_user5_get_tray_settings]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -11518,8 +11547,8 @@ class urfa_client(connection):
             self.pck.add_data(params['group_id'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['dealer_id'] = self.pck.get_data(U_TP_I)
         if ret['dealer_id']  ==  0:
             ret['error'] = dict({10:"error adding dealer. look debug.log for details"})
@@ -11583,8 +11612,8 @@ class urfa_client(connection):
             self.pck.add_data(params['group_id'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if ret['result']  ==  0:
             ret['error'] = dict({10:"error adding dealer. look debug.log for details"})
@@ -11606,8 +11635,8 @@ class urfa_client(connection):
         self.pck.add_data(params['dealer_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if ret['result']  ==  0:
             ret['error'] = dict({10:"error deleting dealer. look debug.log for details"})
@@ -11652,8 +11681,8 @@ class urfa_client(connection):
         self.pck.add_data(params['dealer_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if ret['result']  ==  0:
             ret['error'] = dict({10:"error getting dealer info. look debug.log for details"})
@@ -11706,8 +11735,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['users_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['users_count']): 
             self.pck.recv(self.sck)
@@ -11736,8 +11765,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['payments_count'] = self.pck.get_data(U_TP_I)
         ret['payments_sum'] = self.pck.get_data(U_TP_D)
         if self.pck.recv(self.sck): return ret
@@ -11763,8 +11792,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['methods_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['methods_size']): 
             self.pck.recv(self.sck)
@@ -11796,8 +11825,8 @@ class urfa_client(connection):
         self.pck.add_data(params['dealer_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -11877,8 +11906,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x13019):
             raise Exception("Fail of urfa_call(0x13019) [rpcf_get_dealers_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['dealers_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['dealers_count']): 
             self.pck.recv(self.sck)
@@ -11913,8 +11942,8 @@ class urfa_client(connection):
             self.pck.add_data(params['entity_id_array'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -11935,8 +11964,8 @@ class urfa_client(connection):
         self.pck.add_data(params['entity_type'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['entity_id_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['entity_id_count']): 
             self.pck.recv(self.sck)
@@ -11965,8 +11994,8 @@ class urfa_client(connection):
             self.pck.add_data(params['entity_id_array'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -11980,8 +12009,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x1301d):
             raise Exception("Fail of urfa_call(0x1301d) [rpcf_verify_dealer_cache]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -12006,8 +12035,8 @@ class urfa_client(connection):
         self.pck.add_data(params['to'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['users_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['users_count']): 
             self.pck.recv(self.sck)
@@ -12101,8 +12130,8 @@ class urfa_client(connection):
             self.pck.add_data(params['parameter_value'][i], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['user_id'] = self.pck.get_data(U_TP_I)
         if ret['user_id']  !=  0:
             ret['account_id'] = self.pck.get_data(U_TP_I)
@@ -12192,8 +12221,8 @@ class urfa_client(connection):
             self.pck.add_data(params['parameter_value'][i], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['user_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -12211,8 +12240,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -12246,8 +12275,8 @@ class urfa_client(connection):
         self.pck.add_data(params['to'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['cnt'] = self.pck.get_data(U_TP_I)
         for i in range(ret['cnt']): 
             self.pck.recv(self.sck)
@@ -12274,6 +12303,7 @@ class urfa_client(connection):
                     if not i in ret['group_type']:ret['group_type'][i] = dict()
                     if not j in ret['group_type'][i]:ret['group_type'][i][j] = dict()
                     ret['group_type'][i][j][x] = self.pck.get_data(U_TP_I)
+            self.pck.recv(self.sck)
             ret['user_int_status'][i] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -12332,8 +12362,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['user_id'] = self.pck.get_data(U_TP_I)
         if params['user_id']  ==  0:
             ret['error'] = dict({10:"user not found"})
@@ -12342,6 +12372,7 @@ class urfa_client(connection):
             self.pck.recv(self.sck)
             ret['account_id_array'][i] = self.pck.get_data(U_TP_I)
             ret['account_name_array'][i] = self.pck.get_data(U_TP_S)
+        self.pck.recv(self.sck)
         ret['login'] = self.pck.get_data(U_TP_S)
         ret['password'] = self.pck.get_data(U_TP_S)
         ret['basic_account'] = self.pck.get_data(U_TP_I)
@@ -12400,8 +12431,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['groups_size'] = self.pck.get_data(U_TP_I)
         if ret['groups_size']  ==  0:
             ret['error'] = dict({10:"user has no groups or you dont have enough privileges"})
@@ -12436,8 +12467,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         if ret['size']  ==  0:
             ret['error'] = dict({10:"user has no contacts or you dont have enough privileges"})
@@ -12488,8 +12519,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id_exec_man'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if ret['result']  ==  0:
             ret['error'] = dict({10:"user not found or you dont have enough privileges"})
@@ -12529,8 +12560,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id_exec_man'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if ret['result']  ==  0:
             ret['error'] = dict({10:"user not found or you dont have enough privileges"})
@@ -12554,8 +12585,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if ret['result']  ==  0:
             ret['error'] = dict({10:"contact not found or you dont have enough privileges"})
@@ -12571,8 +12602,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x7000000a):
             raise Exception("Fail of urfa_call(0x7000000a) [rpcf_dealer_get_users_count]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['users_count'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -12594,8 +12625,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         if ret['accounts_count']  ==  0:
             ret['error'] = dict({10:"user has no accounts or you dont have enough privileges"})
@@ -12627,13 +12658,14 @@ class urfa_client(connection):
         self.pck.add_data(params['doc_template_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['text_cnt'] = self.pck.get_data(U_TP_I)
         if ret['text_cnt']  !=  0:
             for i in range(ret['text_cnt']): 
                 self.pck.recv(self.sck)
                 ret['text'][i] = self.pck.get_data(U_TP_S)
+            self.pck.recv(self.sck)
             ret['landscape'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -12657,8 +12689,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x7000000d):
             raise Exception("Fail of urfa_call(0x7000000d) [rpcf_dealer_get_houses_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['houses_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['houses_size']): 
             self.pck.recv(self.sck)
@@ -12689,8 +12721,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x7000000e):
             raise Exception("Fail of urfa_call(0x7000000e) [rpcf_dealer_get_banks]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['banks_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['banks_size']): 
             self.pck.recv(self.sck)
@@ -12728,8 +12760,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x7000000f):
             raise Exception("Fail of urfa_call(0x7000000f) [rpcf_dealer_get_sup]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -12782,8 +12814,8 @@ class urfa_client(connection):
         self.pck.add_data(params['curr'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_size'] = self.pck.get_data(U_TP_I)
         if ret['service_size']  ==  0:
             ret['error'] = dict({13:"tariff not found or you dont have enough privileges"})
@@ -12852,8 +12884,8 @@ class urfa_client(connection):
         self.pck.add_data(params['int_status'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['account_id'] = self.pck.get_data(U_TP_I)
         if ret['account_id']  ==  0:
             ret['error'] = dict({11:"unable to add account or you dont have enough privileges"})
@@ -12875,8 +12907,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['ret_code'] = self.pck.get_data(U_TP_I)
         if ret['ret_code']  ==  0:
             ret['error'] = dict({11:"account does not exist or you dont have enough privileges"})
@@ -12910,8 +12942,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['account_id'] = self.pck.get_data(U_TP_I)
         if params['account_id']  ==  0:
             ret['error'] = dict({11:" account not found or you dont have enough privileges"})
@@ -12947,8 +12979,8 @@ class urfa_client(connection):
         self.pck.add_data(params['is_blocked'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['aid'] = self.pck.get_data(U_TP_I)
         if ret['aid']  ==  0:
             ret['error'] = dict({11:"account not found or you dont have enough privileges"})
@@ -12995,8 +13027,8 @@ class urfa_client(connection):
         self.pck.add_data(params['unlimited'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['aid'] = self.pck.get_data(U_TP_I)
         if ret['aid']  ==  0:
             ret['error'] = dict({11:"account not found or you dont have enough privileges"})
@@ -13016,8 +13048,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['charge_policy'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -13044,8 +13076,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if ret['result']  !=  -1:
             ret['is_active'] = self.pck.get_data(U_TP_I)
@@ -13074,8 +13106,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x70000066):
             raise Exception("Fail of urfa_call(0x70000066) [rpcf_dealer_get_charge_policy_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['policy_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['policy_count']): 
             self.pck.recv(self.sck)
@@ -13110,8 +13142,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_type'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['services_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['services_count']): 
             self.pck.recv(self.sck)
@@ -13153,8 +13185,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x70000022):
             raise Exception("Fail of urfa_call(0x70000022) [rpcf_dealer_get_hotspot_services_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['services_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['services_size']): 
             self.pck.recv(self.sck)
@@ -13184,8 +13216,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x70000023):
             raise Exception("Fail of urfa_call(0x70000023) [rpcf_dealer_get_fictive_services_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['services_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['services_size']): 
             self.pck.recv(self.sck)
@@ -13240,8 +13272,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['sid'] = self.pck.get_data(U_TP_I)
         if ret['sid']  ==  0:
             ret['error'] = dict({11:"service not found or you dont have enough privileges"})
@@ -13263,12 +13295,14 @@ class urfa_client(connection):
             self.pck.recv(self.sck)
             ret['allowed_net_id'][i] = self.pck.get_data(U_TP_I)
             ret['allowed_net_value'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['cost_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['cost_size']): 
             self.pck.recv(self.sck)
             ret['tr_name'][i] = self.pck.get_data(U_TP_S)
             ret['param1'][i] = self.pck.get_data(U_TP_D)
             ret['param2'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['service_data_parent_id'] = self.pck.get_data(U_TP_I)
         ret['tariff_id'] = self.pck.get_data(U_TP_I)
         ret['parent_id'] = self.pck.get_data(U_TP_I)
@@ -13311,8 +13345,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['sid'] = self.pck.get_data(U_TP_I)
         if ret['sid']  ==  0:
             ret['error'] = dict({11:"service not found or you dont have enough privileges"})
@@ -13336,6 +13370,7 @@ class urfa_client(connection):
             ret['tr_name'][i] = self.pck.get_data(U_TP_S)
             ret['param'][i] = self.pck.get_data(U_TP_D)
             ret['id'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['is_parent_id'] = self.pck.get_data(U_TP_I)
         ret['tariff_id'] = self.pck.get_data(U_TP_I)
         ret['parent_id'] = self.pck.get_data(U_TP_I)
@@ -13382,8 +13417,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['sid'] = self.pck.get_data(U_TP_I)
         if ret['sid']  ==  0:
             ret['error'] = dict({11:"service not found or you dont have enough privileges"})
@@ -13413,6 +13448,7 @@ class urfa_client(connection):
                     ret['border_cost'][i][j] = self.pck.get_data(U_TP_D)
             if ret['tclass_tmp']  ==  -1:
                 ret['borders_size_array'][borders_size]="0"
+        self.pck.recv(self.sck)
         ret['prepaid_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['prepaid_count']): 
             self.pck.recv(self.sck)
@@ -13424,11 +13460,13 @@ class urfa_client(connection):
             if ret['tclass_tmp']  ==  -1:
                 ret['prepaid_amount'][i]="0"
                 ret['prepaid_max'][i]="0"
+        self.pck.recv(self.sck)
         ret['tclass_id2group_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['tclass_id2group_size']): 
             self.pck.recv(self.sck)
             ret['tclass_id'][i] = self.pck.get_data(U_TP_I)
             ret['tclass_group_id'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['service_data_parent_id'] = self.pck.get_data(U_TP_I)
         ret['tariff_id'] = self.pck.get_data(U_TP_I)
         ret['parent_id'] = self.pck.get_data(U_TP_I)
@@ -13458,8 +13496,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['sid'] = self.pck.get_data(U_TP_I)
         if ret['sid']  ==  0:
             ret['error'] = dict({11:"service not found or you dont have enough privileges"})
@@ -13500,8 +13538,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['sid'] = self.pck.get_data(U_TP_I)
         if ret['sid']  ==  0:
             ret['error'] = dict({11:"service not found or you dont have enough privileges"})
@@ -13558,8 +13596,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['sid'] = self.pck.get_data(U_TP_I)
         if ret['sid']  ==  0:
             ret['error'] = dict({11:"service not found or you dont have enough privileges"})
@@ -13583,6 +13621,7 @@ class urfa_client(connection):
                 ret['tarif_quantity'][i][j] = self.pck.get_data(U_TP_L)
                 if not i in ret['cost']:ret['cost'][i] = dict()
                 ret['cost'][i][j] = self.pck.get_data(U_TP_D)
+            self.pck.recv(self.sck)
             ret['timerange_count'] = self.pck.get_data(U_TP_I)
             ret['timerange_count_array'][i]=ret['timerange_count']
             for j in range(ret['timerange_count']): 
@@ -13591,6 +13630,7 @@ class urfa_client(connection):
                 ret['timerange_id'][i][j] = self.pck.get_data(U_TP_I)
                 if not i in ret['cost']:ret['cost'][i] = dict()
                 ret['cost'][i][j] = self.pck.get_data(U_TP_D)
+        self.pck.recv(self.sck)
         ret['free_time'] = self.pck.get_data(U_TP_L)
         ret['first_interval'] = self.pck.get_data(U_TP_L)
         ret['first_interval_around'] = self.pck.get_data(U_TP_L)
@@ -13624,8 +13664,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slink_id_count'] = self.pck.get_data(U_TP_I)
         if ret['slink_id_count']  ==  0:
             ret['error'] = dict({11:"services not found or you dont have enough privileges"})
@@ -13856,8 +13896,8 @@ class urfa_client(connection):
                 self.pck.add_data(params['tel_allowed_cid'][i], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slink_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -14041,8 +14081,8 @@ class urfa_client(connection):
                 self.pck.add_data(params['tel_allowed_cid'][i], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slink_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -14062,8 +14102,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['links_count'] = self.pck.get_data(U_TP_I)
         if ret['links_count']  ==  0:
             ret['error'] = dict({11:"service not found or not used or you dont have enough privileges"})
@@ -14084,8 +14124,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x7000002d):
             raise Exception("Fail of urfa_call(0x7000002d) [rpcf_dealer_get_tclasses]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tclass_list_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['tclass_list_size']): 
             self.pck.recv(self.sck)
@@ -14125,8 +14165,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['sid'] = self.pck.get_data(U_TP_I)
         if ret['sid']  ==  0:
             ret['error'] = dict({11:"service link not found or you dont have enough privileges"})
@@ -14177,8 +14217,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['sid'] = self.pck.get_data(U_TP_I)
         if ret['sid']  ==  0:
             ret['error'] = dict({11:"service link not found or you dont have enough privileges"})
@@ -14249,8 +14289,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['sid'] = self.pck.get_data(U_TP_I)
         if ret['sid']  ==  0:
             ret['error'] = dict({11:"service link not found or you dont have enough privileges"})
@@ -14285,6 +14325,7 @@ class urfa_client(connection):
             ret['port_id'][i] = self.pck.get_data(U_TP_I)
             ret['vlan_id'][i] = self.pck.get_data(U_TP_I)
             ret['pool_id'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['quotas_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['quotas_count']): 
             self.pck.recv(self.sck)
@@ -14313,8 +14354,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['sid'] = self.pck.get_data(U_TP_I)
         if ret['sid']  ==  0:
             ret['error'] = dict({11:"service link not found or you dont have enough privileges"})
@@ -14352,8 +14393,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['sid'] = self.pck.get_data(U_TP_I)
         if ret['sid']  ==  0:
             ret['error'] = dict({11:"service link not found or you dont have enough privileges"})
@@ -14399,8 +14440,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['sid'] = self.pck.get_data(U_TP_I)
         if ret['sid']  ==  0:
             ret['error'] = dict({11:"service link not found or you dont have enough privileges"})
@@ -14437,8 +14478,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['error_code'] = self.pck.get_data(U_TP_I)
         if ret['error_code']  ==  0:
             ret['error'] = dict({13:"service link not found or you dont have enough privileges"})
@@ -14475,8 +14516,8 @@ class urfa_client(connection):
         self.pck.add_data(params['change_now'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tariff_link_id'] = self.pck.get_data(U_TP_I)
         if params['tariff_link_id']  ==  0:
             ret['error'] = dict({13:"unable to link user tariff may by you dont have enough privileges"})
@@ -14503,8 +14544,8 @@ class urfa_client(connection):
         self.pck.add_data(params['tariff_link_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tariff_link_id'] = self.pck.get_data(U_TP_I)
         if params['tariff_link_id']  ==  0:
             ret['error'] = dict({13:"unable to unlink user tariff may by you dont have enough privileges"})
@@ -14534,8 +14575,8 @@ class urfa_client(connection):
         self.pck.add_data(params['balance_rollover'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tp_id'] = self.pck.get_data(U_TP_I)
         if ret['tp_id']  ==  0:
             ret['error'] = dict({13:"unable to edit tariff may by you dont have enough privileges"})
@@ -14574,8 +14615,8 @@ class urfa_client(connection):
         self.pck.add_data(params['tariff_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tariff_id'] = self.pck.get_data(U_TP_I)
         if params['tariff_id']  ==  0:
             ret['error'] = dict({13:"unable to get tariff may by you dont have enough privileges"})
@@ -14616,8 +14657,8 @@ class urfa_client(connection):
         self.pck.add_data(params['name'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tid'] = self.pck.get_data(U_TP_I)
         if ret['tid']  ==  0:
             ret['error'] = dict({13:"unable to get tariff may by you dont have enough privileges"})
@@ -14645,8 +14686,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x7000007a):
             raise Exception("Fail of urfa_call(0x7000007a) [rpcf_dealer_get_tariffs_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tariffs_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['tariffs_count']): 
             self.pck.recv(self.sck)
@@ -14687,8 +14728,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['user_tariffs_size'] = self.pck.get_data(U_TP_I)
         if ret['user_tariffs_size']  ==  0:
             ret['error'] = dict({13:"user has no tariffs or you dont have enough privileges"})
@@ -14742,8 +14783,8 @@ class urfa_client(connection):
         self.pck.add_data(params['turn_on_inet'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['payment_transaction_id'] = self.pck.get_data(U_TP_I)
         if ret['payment_transaction_id']  ==  0:
             ret['error'] = dict({13:"payment failed"})
@@ -14790,8 +14831,8 @@ class urfa_client(connection):
         self.pck.add_data(params['hash'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['payment_transaction_id'] = self.pck.get_data(U_TP_I)
         if ret['payment_transaction_id']  ==  0:
             ret['error'] = dict({13:"payment failed"})
@@ -14809,8 +14850,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x70000019):
             raise Exception("Fail of urfa_call(0x70000019) [rpcf_dealer_get_payment_methods_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['payments_list_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['payments_list_count']): 
             self.pck.recv(self.sck)
@@ -14872,8 +14913,8 @@ class urfa_client(connection):
         self.pck.add_data(params['group_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accts_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['accts_size']): 
             self.pck.recv(self.sck)
@@ -14960,6 +15001,7 @@ class urfa_client(connection):
                     if not i in ret['tax']:ret['tax'][i] = dict()
                     if not j in ret['tax'][i]:ret['tax'][i][j] = dict()
                     ret['tax'][i][j][x] = self.pck.get_data(U_TP_D)
+                self.pck.recv(self.sck)
                 if ret['entry_size']  !=  0:
                     if not i in ret['total_sum']:ret['total_sum'][i] = dict()
                     ret['total_sum'][i][j] = self.pck.get_data(U_TP_D)
@@ -14988,8 +15030,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x7000003e):
             raise Exception("Fail of urfa_call(0x7000003e) [rpcf_dealer_get_currency_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['currency_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['currency_size']): 
             self.pck.recv(self.sck)
@@ -15010,8 +15052,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x7000003f):
             raise Exception("Fail of urfa_call(0x7000003f) [rpcf_dealer_get_system_currency]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['currency_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -15055,8 +15097,8 @@ class urfa_client(connection):
         self.pck.add_data(params['show_all'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -15122,8 +15164,8 @@ class urfa_client(connection):
         self.pck.add_data(params['show_all'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -15189,8 +15231,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -15253,8 +15295,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -15331,8 +15373,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for k in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -15449,8 +15491,8 @@ class urfa_client(connection):
         self.pck.add_data(params['password'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -15478,8 +15520,8 @@ class urfa_client(connection):
         self.pck.add_data(params['password'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -15508,8 +15550,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slinks_count'] = self.pck.get_data(U_TP_I)
         for s in range(ret['slinks_count']): 
             self.pck.recv(self.sck)
@@ -15550,8 +15592,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -15615,8 +15657,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for k in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -15753,8 +15795,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for j in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -15832,8 +15874,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for j in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -15905,8 +15947,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for j in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -15972,8 +16014,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for j in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -16042,8 +16084,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['bytes_in_kbyte'] = self.pck.get_data(U_TP_D)
         ret['users_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['users_count']): 
@@ -16123,8 +16165,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['bytes_in_kbyte'] = self.pck.get_data(U_TP_D)
         ret['users_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['users_count']): 
@@ -16216,8 +16258,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for j in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -16339,8 +16381,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_count'] = self.pck.get_data(U_TP_I)
         for j in range(ret['accounts_count']): 
             self.pck.recv(self.sck)
@@ -16433,8 +16475,8 @@ class urfa_client(connection):
         self.pck.add_data(params['end_date'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -16471,8 +16513,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x70000040):
             raise Exception("Fail of urfa_call(0x70000040) [rpcf_dealer_get_discount_periods]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['discount_periods_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['discount_periods_count']): 
             self.pck.recv(self.sck)
@@ -16497,8 +16539,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x70000046):
             raise Exception("Fail of urfa_call(0x70000046) [rpcf_dealer_get_core_time]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['time'] = self.pck.get_data(U_TP_I)
         ret['tzname'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
@@ -16513,8 +16555,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x70000047):
             raise Exception("Fail of urfa_call(0x70000047) [rpcf_dealer_get_core_version]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['version_string'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -16542,8 +16584,8 @@ class urfa_client(connection):
         self.pck.add_data(params['tplink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['services_array_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['services_array_size']): 
             self.pck.recv(self.sck)
@@ -16582,8 +16624,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x7000004a):
             raise Exception("Fail of urfa_call(0x7000004a) [rpcf_dealer_whoami]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['my_uid'] = self.pck.get_data(U_TP_I)
         ret['login'] = self.pck.get_data(U_TP_S)
         ret['user_ip'] = self.pck.get_data(U_TP_IP)
@@ -16594,18 +16636,21 @@ class urfa_client(connection):
             ret['system_group_id'][i] = self.pck.get_data(U_TP_I)
             ret['system_group_name'][i] = self.pck.get_data(U_TP_S)
             ret['system_group_info'][i] = self.pck.get_data(U_TP_S)
+        self.pck.recv(self.sck)
         ret['allowed_fids_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['allowed_fids_size']): 
             self.pck.recv(self.sck)
             ret['id'][i] = self.pck.get_data(U_TP_I)
             ret['name'][i] = self.pck.get_data(U_TP_S)
             ret['module'][i] = self.pck.get_data(U_TP_S)
+        self.pck.recv(self.sck)
         ret['not_allowed_fids_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['not_allowed_fids_size']): 
             self.pck.recv(self.sck)
             ret['id_not_allowed'][i] = self.pck.get_data(U_TP_I)
             ret['name_not_allowed'][i] = self.pck.get_data(U_TP_S)
             ret['module_not_allowed'][i] = self.pck.get_data(U_TP_S)
+        self.pck.recv(self.sck)
         ret['fullname'] = self.pck.get_data(U_TP_S)
         ret['org_name'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
@@ -16620,8 +16665,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x7000004b):
             raise Exception("Fail of urfa_call(0x7000004b) [rpcf_dealer_get_kbyte_size]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['kbyte_size'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -16641,8 +16686,8 @@ class urfa_client(connection):
         self.pck.add_data(params['new_pass'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -16662,8 +16707,8 @@ class urfa_client(connection):
         self.pck.add_data(params['entity_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['entity_name'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -16692,8 +16737,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x7000006E):
             raise Exception("Fail of urfa_call(0x7000006E) [rpcf_dealer_get_switch_types_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -16737,8 +16782,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x7000006F):
             raise Exception("Fail of urfa_call(0x7000006F) [rpcf_dealer_get_dhcp_pool_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -16786,8 +16831,8 @@ class urfa_client(connection):
         self.pck.add_data(params['count'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -16824,8 +16869,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         ret['name'] = self.pck.get_data(U_TP_S)
         ret['location'] = self.pck.get_data(U_TP_S)
@@ -16876,8 +16921,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if ret['result']  ==  0:
             ret['flags'] = self.pck.get_data(U_TP_I)
@@ -16885,6 +16930,7 @@ class urfa_client(connection):
             for i in range(ret['in_tclass_count']): 
                 self.pck.recv(self.sck)
                 ret['in_tclass_id_array'][i] = self.pck.get_data(U_TP_I)
+            self.pck.recv(self.sck)
             ret['in_borders_count'] = self.pck.get_data(U_TP_I)
             ret['in_timeranges_count'] = self.pck.get_data(U_TP_I)
             for i in range(ret['in_borders_count']): 
@@ -16895,10 +16941,12 @@ class urfa_client(connection):
                     ret['in_timerange_id_array'][j] = self.pck.get_data(U_TP_I)
                     if not i in ret['in_limits_array']:ret['in_limits_array'][i] = dict()
                     ret['in_limits_array'][i][j] = self.pck.get_data(U_TP_I)
+            self.pck.recv(self.sck)
             ret['out_tclass_count'] = self.pck.get_data(U_TP_I)
             for i in range(ret['out_tclass_count']): 
                 self.pck.recv(self.sck)
                 ret['out_tclass_id_array'][i] = self.pck.get_data(U_TP_I)
+            self.pck.recv(self.sck)
             ret['out_borders_count'] = self.pck.get_data(U_TP_I)
             ret['out_timeranges_count'] = self.pck.get_data(U_TP_I)
             for i in range(ret['out_borders_count']): 
@@ -16909,6 +16957,7 @@ class urfa_client(connection):
                     ret['out_timerange_id_array'][j] = self.pck.get_data(U_TP_I)
                     if not i in ret['out_limits_array']:ret['out_limits_array'][i] = dict()
                     ret['out_limits_array'][i][j] = self.pck.get_data(U_TP_I)
+            self.pck.recv(self.sck)
             ret['rad_count'] = self.pck.get_data(U_TP_I)
             for i in range(ret['rad_count']): 
                 self.pck.recv(self.sck)
@@ -16916,6 +16965,7 @@ class urfa_client(connection):
                 ret['rad_attr'][i] = self.pck.get_data(U_TP_I)
                 ret['rad_type'][i] = self.pck.get_data(U_TP_I)
                 ret['rad_value'][i] = self.pck.get_data(U_TP_S)
+            self.pck.recv(self.sck)
             ret['turbo_mode_service_id'] = self.pck.get_data(U_TP_I)
             ret['turbo_mode_incoming_rate'] = self.pck.get_data(U_TP_I)
             ret['turbo_mode_outgoing_rate'] = self.pck.get_data(U_TP_I)
@@ -16937,8 +16987,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -16955,8 +17005,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x12006):
             raise Exception("Fail of urfa_call(0x12006) [rpcf_get_shaped_services]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['svc_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['svc_count']): 
             self.pck.recv(self.sck)
@@ -17036,8 +17086,8 @@ class urfa_client(connection):
         self.pck.add_data(params['turbo_mode_acct_period_flag'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -17112,8 +17162,8 @@ class urfa_client(connection):
         self.pck.add_data(params['turbo_mode_acct_period_flag'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -17135,8 +17185,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['flags'] = self.pck.get_data(U_TP_I)
         ret['incoming_rate'] = self.pck.get_data(U_TP_I)
         ret['outgoing_rate'] = self.pck.get_data(U_TP_I)
@@ -17158,8 +17208,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -17180,8 +17230,8 @@ class urfa_client(connection):
         self.pck.add_data(params['slink_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['incoming_rate'] = self.pck.get_data(U_TP_I)
         ret['outgoing_rate'] = self.pck.get_data(U_TP_I)
         ret['duration'] = self.pck.get_data(U_TP_I)
@@ -17207,8 +17257,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x4308):
             raise Exception("Fail of urfa_call(0x4308) [rpcf_hotspot_sessions_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['sess_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['sess_count']): 
             self.pck.recv(self.sck)
@@ -17239,8 +17289,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['cnt'] = self.pck.get_data(U_TP_I)
         for i in range(ret['cnt']): 
             self.pck.recv(self.sck)
@@ -17269,8 +17319,8 @@ class urfa_client(connection):
             self.pck.add_data(params['mask'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -17284,8 +17334,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x0048):
             raise Exception("Fail of urfa_call(0x0048) [rpcf_get_fw_events]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['fw_events'] = self.pck.get_data(U_TP_L)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -17301,8 +17351,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x0049):
             raise Exception("Fail of urfa_call(0x0049) [rpcf_get_fw_subst]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['subst_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['subst_count']): 
             self.pck.recv(self.sck)
@@ -17384,8 +17434,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x4052):
             raise Exception("Fail of urfa_call(-0x4052) [rpcf_user5_get_user_info_new]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['user_id'] = self.pck.get_data(U_TP_I)
         ret['login'] = self.pck.get_data(U_TP_S)
         ret['basic_account'] = self.pck.get_data(U_TP_I)
@@ -17437,8 +17487,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x4041):
             raise Exception("Fail of urfa_call(-0x4041) [rpcf_user5_get_invoice_data_new]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['full_name'] = self.pck.get_data(U_TP_S)
         ret['actual_address'] = self.pck.get_data(U_TP_S)
         ret['juridical_address'] = self.pck.get_data(U_TP_S)
@@ -17473,8 +17523,8 @@ class urfa_client(connection):
         self.pck.add_data(params['ic_id'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -17500,8 +17550,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_L)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['message_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['message_size']): 
             self.pck.recv(self.sck)
@@ -17536,8 +17586,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_L)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['message_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['message_size']): 
             self.pck.recv(self.sck)
@@ -17569,8 +17619,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['message_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['message_size']): 
             self.pck.recv(self.sck)
@@ -17622,8 +17672,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['subject'] = self.pck.get_data(U_TP_S)
         ret['message'] = self.pck.get_data(U_TP_S)
         ret['mime'] = self.pck.get_data(U_TP_S)
@@ -17655,8 +17705,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['messages_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['messages_size']): 
             self.pck.recv(self.sck)
@@ -17683,8 +17733,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x4046):
             raise Exception("Fail of urfa_call(-0x4046) [rpcf_user5_get_new_messages_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['messages_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['messages_size']): 
             self.pck.recv(self.sck)
@@ -17711,8 +17761,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x500f):
             raise Exception("Fail of urfa_call(0x500f) [rpcf_get_new_messages_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['messages_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['messages_size']): 
             self.pck.recv(self.sck)
@@ -17742,8 +17792,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['subject'] = self.pck.get_data(U_TP_S)
         ret['message'] = self.pck.get_data(U_TP_S)
         ret['mime'] = self.pck.get_data(U_TP_S)
@@ -17812,8 +17862,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['currency_id'] = self.pck.get_data(U_TP_I)
         ret['currency_name'] = self.pck.get_data(U_TP_S)
         ret['accts_size'] = self.pck.get_data(U_TP_I)
@@ -17855,8 +17905,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['aggregation_interval'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -17878,12 +17928,13 @@ class urfa_client(connection):
         self.pck.add_data(params['base_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['text_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['text_count']): 
             self.pck.recv(self.sck)
             ret['dynamic_text'][i] = self.pck.get_data(U_TP_S)
+        self.pck.recv(self.sck)
         ret['landscape'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -17903,8 +17954,8 @@ class urfa_client(connection):
         self.pck.add_data(params['aggregation_interval'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -17942,8 +17993,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x15028):
             raise Exception("Fail of urfa_call(-0x15028) [rpcf_user5_get_accounts_new]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['accounts_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['accounts_size']): 
             self.pck.recv(self.sck)
@@ -17971,8 +18022,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x4051):
             raise Exception("Fail of urfa_call(-0x4051) [rpcf_user5_get_banks]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['banks_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['banks_size']): 
             self.pck.recv(self.sck)
@@ -18013,8 +18064,8 @@ class urfa_client(connection):
         self.pck.add_data(params['doc_template_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['doc_template_id'] = self.pck.get_data(U_TP_I)
         ret['static_id'] = self.pck.get_data(U_TP_I)
         if ret['static_id']  !=  0:
@@ -18022,6 +18073,7 @@ class urfa_client(connection):
             for i in range(ret['text_count']): 
                 self.pck.recv(self.sck)
                 ret['dynamic_text'][i] = self.pck.get_data(U_TP_S)
+            self.pck.recv(self.sck)
             ret['dynamic_landscape'] = self.pck.get_data(U_TP_I)
         if ret['static_id']  ==  0:
             ret['dynamic_id'] = self.pck.get_data(U_TP_I)
@@ -18029,6 +18081,7 @@ class urfa_client(connection):
             for i in range(ret['text_count']): 
                 self.pck.recv(self.sck)
                 ret['static_text'][i] = self.pck.get_data(U_TP_S)
+            self.pck.recv(self.sck)
             ret['static_landscape'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18060,8 +18113,8 @@ class urfa_client(connection):
         self.pck.add_data(params['invoice_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -18103,8 +18156,8 @@ class urfa_client(connection):
         self.pck.add_data(params['comment'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18122,8 +18175,8 @@ class urfa_client(connection):
         self.pck.add_data(params['invoice_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18156,8 +18209,8 @@ class urfa_client(connection):
         self.pck.add_data(params['uaparam_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18183,8 +18236,8 @@ class urfa_client(connection):
         self.pck.add_data(params['user_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -18218,8 +18271,8 @@ class urfa_client(connection):
         self.pck.add_data(params['cid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['descr'] = self.pck.get_data(U_TP_S)
         ret['reason'] = self.pck.get_data(U_TP_S)
         ret['person'] = self.pck.get_data(U_TP_S)
@@ -18305,12 +18358,13 @@ class urfa_client(connection):
         self.pck.add_data(params['base_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['text_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['text_count']): 
             self.pck.recv(self.sck)
             ret['dynamic_text'][i] = self.pck.get_data(U_TP_S)
+        self.pck.recv(self.sck)
         ret['landscape'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18330,8 +18384,8 @@ class urfa_client(connection):
         self.pck.add_data(params['external_id'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18349,8 +18403,8 @@ class urfa_client(connection):
         self.pck.add_data(params['aid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['external_id'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18368,8 +18422,8 @@ class urfa_client(connection):
         self.pck.add_data(params['external_id'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['aid'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18391,8 +18445,8 @@ class urfa_client(connection):
         self.pck.add_data(params['comment'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18439,8 +18493,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['users_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['users_count']): 
             self.pck.recv(self.sck)
@@ -18503,8 +18557,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x15014):
             raise Exception("Fail of urfa_call(0x15014) [rpcf_get_switch_tariff_settings]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -18569,8 +18623,8 @@ class urfa_client(connection):
             self.pck.add_data(params['service_id'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18613,8 +18667,8 @@ class urfa_client(connection):
             self.pck.add_data(params['service_id'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18632,8 +18686,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18661,8 +18715,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x15010):
             raise Exception("Fail of urfa_call(0x15010) [rpcf_get_voluntary_suspension_settings]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -18720,8 +18774,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18765,8 +18819,8 @@ class urfa_client(connection):
         self.pck.add_data(params['service_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18784,8 +18838,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18812,8 +18866,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x15034):
             raise Exception("Fail of urfa_call(0x15034) [rpcf_get_promised_payment_settings]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -18868,8 +18922,8 @@ class urfa_client(connection):
         self.pck.add_data(params['flags'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18911,8 +18965,8 @@ class urfa_client(connection):
         self.pck.add_data(params['flags'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18930,8 +18984,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -18949,8 +19003,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x15024):
             raise Exception("Fail of urfa_call(0x15024) [rpcf_get_funds_flow_settings]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -18978,8 +19032,8 @@ class urfa_client(connection):
         self.pck.add_data(params['is_enabled'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19003,8 +19057,8 @@ class urfa_client(connection):
         self.pck.add_data(params['is_enabled'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19022,8 +19076,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19045,8 +19099,8 @@ class urfa_client(connection):
         self.pck.add_data(params['amount'], U_TP_D)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19070,8 +19124,8 @@ class urfa_client(connection):
         self.pck.add_data(params['time_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -19106,8 +19160,8 @@ class urfa_client(connection):
         self.pck.add_data(params['uid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['count']): 
             self.pck.recv(self.sck)
@@ -19145,8 +19199,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['user_tariffs_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['user_tariffs_size']): 
             self.pck.recv(self.sck)
@@ -19190,8 +19244,8 @@ class urfa_client(connection):
         self.pck.add_data(params['tp_link'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['user_tariffs_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['user_tariffs_size']): 
             self.pck.recv(self.sck)
@@ -19204,6 +19258,7 @@ class urfa_client(connection):
             ret['use_free_balance'][i] = self.pck.get_data(U_TP_I)
             ret['cost'][i] = self.pck.get_data(U_TP_D)
             ret['can_change'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['balance'] = self.pck.get_data(U_TP_D)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19225,8 +19280,8 @@ class urfa_client(connection):
         self.pck.add_data(params['tp_next'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19261,8 +19316,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['res'] = self.pck.get_data(U_TP_I)
         if ret['res']  ==  1:
             ret['block_start'] = self.pck.get_data(U_TP_I)
@@ -19303,8 +19358,8 @@ class urfa_client(connection):
         self.pck.add_data(params['block_end'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19323,8 +19378,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19354,8 +19409,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['res'] = self.pck.get_data(U_TP_I)
         if ret['res']  !=  -1:
             ret['last_payment_date'] = self.pck.get_data(U_TP_I)
@@ -19388,8 +19443,8 @@ class urfa_client(connection):
         self.pck.add_data(params['value'], U_TP_D)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19422,8 +19477,8 @@ class urfa_client(connection):
         self.pck.add_data(params['tariff_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tariff_name'] = self.pck.get_data(U_TP_S)
         ret['tariff_create_date'] = self.pck.get_data(U_TP_I)
         ret['who_create'] = self.pck.get_data(U_TP_I)
@@ -19462,8 +19517,8 @@ class urfa_client(connection):
         self.pck.add_data(params['comments'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tp_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19487,8 +19542,8 @@ class urfa_client(connection):
         self.pck.add_data(params['comments'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tp_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19518,8 +19573,8 @@ class urfa_client(connection):
         self.pck.add_data(params['drop_from_group'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19551,8 +19606,8 @@ class urfa_client(connection):
         self.pck.add_data(params['drop_from_group'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19582,8 +19637,8 @@ class urfa_client(connection):
         self.pck.add_data(params['discount_method'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19615,8 +19670,8 @@ class urfa_client(connection):
         self.pck.add_data(params['discount_method'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19680,8 +19735,8 @@ class urfa_client(connection):
             self.pck.add_data(params['gid'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19747,8 +19802,8 @@ class urfa_client(connection):
             self.pck.add_data(params['gid'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19800,8 +19855,8 @@ class urfa_client(connection):
             self.pck.add_data(params['periodic_service_id'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19855,8 +19910,8 @@ class urfa_client(connection):
             self.pck.add_data(params['periodic_service_id'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19904,8 +19959,8 @@ class urfa_client(connection):
             self.pck.add_data(params['range_id'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19955,8 +20010,8 @@ class urfa_client(connection):
             self.pck.add_data(params['range_id'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -19987,8 +20042,8 @@ class urfa_client(connection):
         self.pck.add_data(params['cost_coef'], U_TP_D)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slink_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20013,8 +20068,8 @@ class urfa_client(connection):
         self.pck.add_data(params['cost_coef'], U_TP_D)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slink_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20055,8 +20110,8 @@ class urfa_client(connection):
         self.pck.add_data(params['cost_coef'], U_TP_D)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slink_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20085,8 +20140,8 @@ class urfa_client(connection):
         self.pck.add_data(params['cost_coef'], U_TP_D)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slink_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20138,8 +20193,8 @@ class urfa_client(connection):
         self.pck.add_data(params['callback_enabled'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slink_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20179,8 +20234,8 @@ class urfa_client(connection):
         self.pck.add_data(params['callback_enabled'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slink_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20225,8 +20280,8 @@ class urfa_client(connection):
         self.pck.add_data(params['hotspot_password'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slink_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20260,8 +20315,8 @@ class urfa_client(connection):
         self.pck.add_data(params['hotspot_password'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slink_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20334,8 +20389,8 @@ class urfa_client(connection):
             self.pck.add_data(params['quota'][i], U_TP_L)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slink_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20393,8 +20448,8 @@ class urfa_client(connection):
             self.pck.add_data(params['quota'][i], U_TP_L)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slink_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20470,8 +20525,8 @@ class urfa_client(connection):
             self.pck.add_data(params['quota'][i], U_TP_L)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['slink_id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20493,8 +20548,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -20514,8 +20569,8 @@ class urfa_client(connection):
         if not self.urfa_call(-0x403b):
             raise Exception("Fail of urfa_call(-0x403b) [rpcf_user5_get_ui_settings]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['permissions'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20533,8 +20588,8 @@ class urfa_client(connection):
         self.pck.add_data(params['account_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['external_id'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20560,8 +20615,8 @@ class urfa_client(connection):
         self.pck.add_data(params['sid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_name'] = self.pck.get_data(U_TP_S)
         ret['comment'] = self.pck.get_data(U_TP_S)
         ret['link_by_default'] = self.pck.get_data(U_TP_I)
@@ -20605,8 +20660,8 @@ class urfa_client(connection):
         self.pck.add_data(params['sid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_name'] = self.pck.get_data(U_TP_S)
         ret['comment'] = self.pck.get_data(U_TP_S)
         ret['link_by_default'] = self.pck.get_data(U_TP_I)
@@ -20625,6 +20680,7 @@ class urfa_client(connection):
             ret['tr_time'][i] = self.pck.get_data(U_TP_S)
             ret['param'][i] = self.pck.get_data(U_TP_D)
             ret['id'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['is_parent_id'] = self.pck.get_data(U_TP_I)
         ret['tariff_id'] = self.pck.get_data(U_TP_I)
         ret['parent_id'] = self.pck.get_data(U_TP_I)
@@ -20664,8 +20720,8 @@ class urfa_client(connection):
         self.pck.add_data(params['sid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_name'] = self.pck.get_data(U_TP_S)
         ret['comment'] = self.pck.get_data(U_TP_S)
         ret['link_by_default'] = self.pck.get_data(U_TP_I)
@@ -20682,12 +20738,14 @@ class urfa_client(connection):
             self.pck.recv(self.sck)
             ret['allowed_net_id'][i] = self.pck.get_data(U_TP_I)
             ret['allowed_net_value'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['cost_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['cost_size']): 
             self.pck.recv(self.sck)
             ret['tr_time'][i] = self.pck.get_data(U_TP_S)
             ret['param1'][i] = self.pck.get_data(U_TP_D)
             ret['param2'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['service_data_parent_id'] = self.pck.get_data(U_TP_I)
         ret['tariff_id'] = self.pck.get_data(U_TP_I)
         ret['parent_id'] = self.pck.get_data(U_TP_I)
@@ -20730,8 +20788,8 @@ class urfa_client(connection):
         self.pck.add_data(params['sid'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_name'] = self.pck.get_data(U_TP_S)
         ret['comment'] = self.pck.get_data(U_TP_S)
         ret['link_by_default'] = self.pck.get_data(U_TP_I)
@@ -20754,6 +20812,7 @@ class urfa_client(connection):
                     ret['border_id'][i][j] = self.pck.get_data(U_TP_L)
                     if not i in ret['border_cost']:ret['border_cost'][i] = dict()
                     ret['border_cost'][i][j] = self.pck.get_data(U_TP_D)
+        self.pck.recv(self.sck)
         ret['prepaid_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['prepaid_count']): 
             self.pck.recv(self.sck)
@@ -20761,11 +20820,13 @@ class urfa_client(connection):
             if ret['tclass'][i]  !=  -1:
                 ret['prepaid_amount'][i] = self.pck.get_data(U_TP_L)
                 ret['prepaid_max'][i] = self.pck.get_data(U_TP_L)
+        self.pck.recv(self.sck)
         ret['tclass_id2group_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['tclass_id2group_size']): 
             self.pck.recv(self.sck)
             ret['tclass_id'][i] = self.pck.get_data(U_TP_I)
             ret['tclass_group_id'][i] = self.pck.get_data(U_TP_I)
+        self.pck.recv(self.sck)
         ret['service_data_parent_id'] = self.pck.get_data(U_TP_I)
         ret['tariff_id'] = self.pck.get_data(U_TP_I)
         ret['parent_id'] = self.pck.get_data(U_TP_I)
@@ -20789,8 +20850,8 @@ class urfa_client(connection):
         self.pck.add_data(params['quota'], U_TP_L)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20804,8 +20865,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x11113):
             raise Exception("Fail of urfa_call(0x11113) [rpcf_get_timezone]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['tzname'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20831,8 +20892,8 @@ class urfa_client(connection):
         self.pck.add_data(params['to'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['users_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['users_count']): 
             self.pck.recv(self.sck)
@@ -20868,8 +20929,8 @@ class urfa_client(connection):
         self.pck.add_data(params['number'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20886,8 +20947,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x15032):
             raise Exception("Fail of urfa_call(0x15032) [rpcf_get_tel_emergency_calls]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['service_count'] = self.pck.get_data(U_TP_I)
         for i in range(ret['service_count']): 
             self.pck.recv(self.sck)
@@ -20918,8 +20979,8 @@ class urfa_client(connection):
             self.pck.add_data(params['zone_id_array'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20939,8 +21000,8 @@ class urfa_client(connection):
         self.pck.add_data(params['type'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -20985,8 +21046,8 @@ class urfa_client(connection):
                     self.pck.add_data(params['attr_data_ip'][i][ii], U_TP_IP)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -21017,8 +21078,8 @@ class urfa_client(connection):
         self.pck.add_data(params['type'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -21065,8 +21126,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         ret['name'] = self.pck.get_data(U_TP_S)
         ret['location'] = self.pck.get_data(U_TP_S)
@@ -21106,8 +21167,8 @@ class urfa_client(connection):
         self.pck.add_data(params['password'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -21125,8 +21186,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -21160,8 +21221,8 @@ class urfa_client(connection):
         self.pck.add_data(params['password'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -21190,8 +21251,8 @@ class urfa_client(connection):
         self.pck.add_data(params['count'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -21216,8 +21277,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x1155):
             raise Exception("Fail of urfa_call(0x1155) [rpcf_get_switches_count]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -21237,8 +21298,8 @@ class urfa_client(connection):
         self.pck.add_data(params['value'], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['count'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -21274,8 +21335,8 @@ class urfa_client(connection):
             self.pck.add_data(params['value'][i], U_TP_S)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         if ret['size']  !=  -1:
             if ret['size']  !=  -2:
@@ -21312,8 +21373,8 @@ class urfa_client(connection):
         self.pck.add_data(params['switch_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['ports_size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['ports_size']): 
             self.pck.recv(self.sck)
@@ -21356,8 +21417,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         ret['name'] = self.pck.get_data(U_TP_S)
         ret['supp_volumes'] = self.pck.get_data(U_TP_S)
@@ -21418,8 +21479,8 @@ class urfa_client(connection):
         self.pck.add_data(params['vlan_id_offset'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -21437,8 +21498,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -21486,8 +21547,8 @@ class urfa_client(connection):
         self.pck.add_data(params['vlan_id_offset'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -21517,8 +21578,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x508):
             raise Exception("Fail of urfa_call(0x508) [rpcf_get_switch_types_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -21567,8 +21628,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         ret['gateway'] = self.pck.get_data(U_TP_IP)
         ret['netmask'] = self.pck.get_data(U_TP_IP)
@@ -21626,8 +21687,8 @@ class urfa_client(connection):
             self.pck.add_data(params['range_flags'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -21645,8 +21706,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -21691,8 +21752,8 @@ class urfa_client(connection):
             self.pck.add_data(params['range_flags'][i], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['id'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -21719,8 +21780,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x704):
             raise Exception("Fail of urfa_call(0x704) [rpcf_get_dhcp_pool_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -21762,8 +21823,8 @@ class urfa_client(connection):
         if not self.urfa_call(0x1350):
             raise Exception("Fail of urfa_call(0x1350) [rpcf_get_leases_list]")
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['size'] = self.pck.get_data(U_TP_I)
         for i in range(ret['size']): 
             self.pck.recv(self.sck)
@@ -21792,8 +21853,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['ret_code'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -21811,8 +21872,8 @@ class urfa_client(connection):
         self.pck.add_data(params['id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['ret_code'] = self.pck.get_data(U_TP_I)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
@@ -21866,8 +21927,8 @@ class urfa_client(connection):
         self.pck.add_data(params['pool_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         ret['err_desc'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
@@ -21904,8 +21965,8 @@ class urfa_client(connection):
         self.pck.add_data(params['vlan_id'], U_TP_I)
         self.pck.send(self.sck)
         #--------- output
-        self.pck.recv(self.sck)
         ret = defaultdict(dict)
+        self.pck.recv(self.sck)
         ret['result'] = self.pck.get_data(U_TP_I)
         ret['err_desc'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret

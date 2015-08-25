@@ -31,9 +31,12 @@ def resolv_names(ref,io_type,names):
         return names[io_type][ref]
     return ref
 
-def pars_params(io, io_type, codelist, docslist, code_idt_cnt=glob_idnt_cnt + 1, doc_idt_cnt=1, names={}):
+def pars_params(io, io_type, codelist, docslist, code_idt_cnt=glob_idnt_cnt + 1, doc_idt_cnt=1, names={}, data_ready=False):
     for prm in io:
         idt = glob_idnt * code_idt_cnt
+        if io_type == 'output' and not data_ready:
+            codelist.append(idt + 'self.pck.recv(self.sck)')
+            data_ready = True
         if prm.tag in ('string', 'integer', 'long', 'double', 'ip_address'):
             type = ''
             if prm.tag == 'string':
@@ -106,7 +109,7 @@ def pars_params(io, io_type, codelist, docslist, code_idt_cnt=glob_idnt_cnt + 1,
                 value=prm.attrib['value']
             )
             )
-            pars_params(prm, io_type, codelist, docslist, code_idt_cnt + 1, doc_idt_cnt + 1, names)
+            pars_params(prm, io_type, codelist, docslist, code_idt_cnt + 1, doc_idt_cnt + 1, names, data_ready=True)
 
         elif prm.tag == 'for':
             count = prm.attrib['count']
@@ -122,8 +125,8 @@ def pars_params(io, io_type, codelist, docslist, code_idt_cnt=glob_idnt_cnt + 1,
                 pars_params(prm, io_type, codelist, docslist, code_idt_cnt + 1, doc_idt_cnt + 1, names)
             elif io_type == 'output':
                 codelist.append(idt + "for {0} in range({1}): ".format(idx,count))
-                codelist.append(idt + glob_idnt + 'self.pck.recv(self.sck)')
                 pars_params(prm, io_type, codelist, docslist, code_idt_cnt + 1, doc_idt_cnt + 1, names)
+                data_ready = False
 
         elif prm.tag == 'set':
             if io_type == 'output':
@@ -190,7 +193,32 @@ def building():
 
 
 def printing():
-    code = [glob_idnt + 'from collections import defaultdict']
+    code= ['''#coding=utf-8
+
+""" main class of urfa-module """
+from urfa_connection import *
+from collections import defaultdict
+
+def blocked2ret(blockcode, retdict):
+    if blockcode:
+        retdict['block_flags'] = []
+        if U_BL_SYS == blockcode & U_BL_SYS:
+            retdict['block_flags'].append('U_BL_SYS')
+            if U_BL_SYS_REC_AB == blockcode & U_BL_SYS_REC_AB:
+                retdict['block_flags'].append('U_BL_SYS_REC_AB')
+            if U_BL_SYS_REC_PAY == blockcode & U_BL_SYS_REC_PAY:
+                retdict['block_flags'].append('U_BL_SYS_REC_PAY')
+        if U_BL_MAN == blockcode & U_BL_MAN:
+            retdict['block_flags'].append('U_BL_MAN')
+            if U_BL_MAN_REC_AB == blockcode & U_BL_MAN_REC_AB:
+                retdict['block_flags'].append('U_BL_MAN_REC_AB')
+            if U_BL_MAN_REC_PAY == blockcode & U_BL_MAN_REC_PAY:
+                retdict['block_flags'].append('U_BL_MAN_REC_PAY')
+
+
+class urfa_client(connection):
+    """ URFA-client class - container of URFA-functions and interfase of URFA """
+''']
     fn_cur_num = 0
     for fn in functions:
         fn_cur_num += 1
@@ -222,7 +250,6 @@ def printing():
         if len(fn['code']['output']):
             fn_ret = 'ret'
             code.append(glob_idnt * 2 + '#--------- output')
-            code.append(glob_idnt * 2 + 'self.pck.recv(self.sck)')
             code.append(glob_idnt * 2 + 'ret = defaultdict(dict)')
             for prm_out in fn['code']['output']:
                 code.append(prm_out)

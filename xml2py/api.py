@@ -1,29 +1,3 @@
-#coding=utf-8
-
-""" main class of urfa-module """
-from urfa_connection import *
-
-
-def blocked2ret(blockcode, retdict):
-    if blockcode:
-        retdict['block_flags'] = []
-        if U_BL_SYS == blockcode & U_BL_SYS:
-            retdict['block_flags'].append('U_BL_SYS')
-            if U_BL_SYS_REC_AB == blockcode & U_BL_SYS_REC_AB:
-                retdict['block_flags'].append('U_BL_SYS_REC_AB')
-            if U_BL_SYS_REC_PAY == blockcode & U_BL_SYS_REC_PAY:
-                retdict['block_flags'].append('U_BL_SYS_REC_PAY')
-        if U_BL_MAN == blockcode & U_BL_MAN:
-            retdict['block_flags'].append('U_BL_MAN')
-            if U_BL_MAN_REC_AB == blockcode & U_BL_MAN_REC_AB:
-                retdict['block_flags'].append('U_BL_MAN_REC_AB')
-            if U_BL_MAN_REC_PAY == blockcode & U_BL_MAN_REC_PAY:
-                retdict['block_flags'].append('U_BL_MAN_REC_PAY')
-
-
-class urfa_client(connection):
-    """ URFA-client class - container of URFA-functions and interfase of URFA """
-
     from collections import defaultdict
     def rpcf_liburfa_list(self):
         """ description

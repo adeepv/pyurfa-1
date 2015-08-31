@@ -25,13 +25,19 @@ def main():
   db = MySQLdb.connect(db = dbname,passwd = dbpass,host = dbhost, user = dbuser, charset='utf8')
   c = db.cursor()
 
-  sql = """SELECT users.id,users_accounts.id,users.full_name,balance,users.mobile_telephone,additional_params.lstart,min((TO_DAYS(curdate()) - TO_DAYS(FROM_UNIXTIME(bi.start_date))) DIV 30) as month_loyalty FROM
-        accounts LEFT JOIN blocks_info AS bi ON accounts.id = bi.account_id,
+  sql = """SELECT users.id,users_accounts.id,users.full_name,balance,users.mobile_telephone,
+        additional_params.lstart,
+        MIN((TO_DAYS(curdate()) - TO_DAYS(FROM_UNIXTIME(bi.start_date))) DIV 30) as month_loyalty,
+        SUM(payment_absolute) as summa FROM
+        accounts LEFT JOIN
+          blocks_info AS bi ON accounts.id = bi.account_id LEFT JOIN
+            payment_transactions AS pt ON accounts.id = pt.account_id,
         users_accounts,
         users LEFT JOIN
          (SELECT userid AS uid, UNIX_TIMESTAMP(str_to_date(value,'%d/%m/%Y')) AS lstart FROM user_additional_params
           WHERE paramid = (SELECT paramid FROM uaddparams_desc WHERE name = 'loyalty_start')
           GROUP BY uid) AS additional_params ON additional_params.uid = users.id
+
         WHERE users_accounts.uid = users.id
         AND bi.start_date >= additional_params.lstart
         AND block_type = 1
@@ -39,7 +45,13 @@ def main():
         AND NOT accounts.is_deleted
         AND NOT unlimited
         AND LENGTH(TRIM(mobile_telephone))
-        AND lstart group by users_accounts.account_id"""
+        AND lstart
+        AND pt.actual_date >= UNIX_TIMESTAMP(date_sub(curdate( ), INTERVAL 1 DAY))
+        AND pt.actual_date < UNIX_TIMESTAMP(curdate( ))
+        AND pt.payment_absolute > 0
+        AND pt.method IN (1,2,3)
+        AND pt.is_canceled = 0
+        group by users_accounts.account_id"""
 
   #Выборка платежей за предыдущие сутки
   sql = """SELECT account_id, SUM(payment_absolute) as summa, users.id FROM payment_transactions INNER JOIN users ON users.basic_account = payment_transactions.account_id

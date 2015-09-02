@@ -18,10 +18,11 @@ dbuser = "NCX4IS"
 dbpass = "NCX4IS"
 dbname = "UTM5"
 dbhost = "bill.nester.ru"
+smtphost = 'mail.nester.ru'
 
-fromAddr = ''
-reportAddr = ''
-#reportAddr = 'snkhokh@gmail.com'
+fromAddr = 'ZAO_Nester@nester.ru'
+reportAddr = 'ilona84@mail.ru'
+reportAddr = 'sn@nester.ru'
 
 def lindex2percent(lind):
     if lind >= 3:
@@ -35,6 +36,7 @@ def resource_path(relative):
     return os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(".")),relative)
 
 def main():
+    runtime = datetime.datetime.now()
     bill = urfa_client('bill.nester.ru', 11758, 'init', 'init02Nit87',admin=True,crt_file=resource_path('admin.crt'))
     db = MySQLdb.connect(db = dbname,passwd = dbpass,host = dbhost, user = dbuser, charset='utf8')
     c = db.cursor()
@@ -70,33 +72,42 @@ WHERE u.id = ua.uid
 GROUP BY u.id
 """
     c.execute(sql)
-    report = u''
-    s = smtplib.SMTP('localhost')
+    report = u'Обработка учетных записей абонентов, усастников программы лояльности:\n'
+    s = smtplib.SMTP(smtphost)
     for (uid, aid, uname, tel, lind) in c.fetchall():
-        print u"%s (uid:%s) индекс лояльности - %s" % (uname, uid, lind)
+        report += u"Идентификатор абонента: %s, Лицевой счет: %s Полное имя: %s, индекс лояльности: %s\n"\
+                  % (uid, aid, uname, lind)
         pbonus = lindex2percent(lind)
         if not pbonus:
             continue
-        m = re.match(r'^(?:8|\+7)?([0-9]{10})',re.sub('-','',tel))
-        bonus = 0
+        pSum = 0
         pm = bill.report_payments({'user_id': uid, 'time_start': stime, 'time_end': ftime})
         for i in pm:
-            bonus += pm[i]['sum']
-        bonus *=pbonus
+            pSum += pm[i]['sum']
+        bonus = pbonus * pSum
         if bonus:
-            report += u"Идентификатор абонента: %s, Лицевой счет: %s Полное имя: %s , Бонус: %s\n" % (uid, aid, uname, bonus)
-#            ret = bill.rpcf_add_once_slink_ex({'user_id':uid,'account_id':aid,'service_id':bonusServiceId,'cost_coef':-bonus})
-            if m:
-                toAddr = "8%s@sms.beeline.amega-inform.ru" % m.group(1)
-                msg = MIMEText('Ув. абонент! За участие в бонусной программе, Вам начислен бонус в размере %s %% от суммы пополнения - %s рублей.'
-                           % (pbonus*100,bonus),'plain','utf-8')
-                msg['Subject'] = 'Short message service'
-                msg['From'] = fromAddr
-                msg['To'] = toAddr
-                # s.sendmail(fromAddr, [toAddr], msg.as_string())
-
-
-
-
+            report += u"Суточный платеж: %s Начислен бонус: %s коэфициент: %s" % (pSum, bonus, pbonus)
+            ret = bill.rpcf_add_once_slink_ex({'user_id':uid,'account_id':aid,'service_id':bonusServiceId,'cost_coef':-bonus})
+            if ret:
+                report += u" ИдСервСвязки: %s \n" % (ret,)
+                m = re.match(r'^(?:8|\+7)?([0-9]{10})',re.sub('-','',tel))
+                if m:
+                    toAddr = "8%s@sms.beeline.amega-inform.ru" % m.group(1)
+                    msg = MIMEText('Ув. абонент! За участие в бонусной программе, Вам начислен бонус в размере %s %% от суммы пополнения - %s рублей.'
+                                   % (pbonus*100,bonus),'plain','utf-8')
+                    msg['Subject'] = 'Short message service'
+                    msg['From'] = fromAddr
+                    msg['To'] = toAddr
+                    s.sendmail(fromAddr, [toAddr], msg.as_string())
+                else:
+                    report += u'ВНИМАНИЕ! ОШИБОЧНЫЙ НОМЕР МОБ. ТЕЛЕФОНА АБОНЕНТА! (%s) ОТСЫЛКА ОПОВЕЩЕНИЯ НЕВОЗМОЖНО!\n' % (tel,)
+            else:
+                report += u" НЕИЗВЕСТНЫЙ РЕЗУЛЬТАТ НАЧИСЛЕНИЯ БОНУСА!\n"
+    msg = MIMEText(report,'plain','utf-8')
+    msg['Subject'] = u'Отчет программы лояльности за %s' % (runtime.strftime('%d-%m-%Y'),)
+    msg['From'] = fromAddr
+    msg['To'] = reportAddr
+    s.sendmail(fromAddr, [reportAddr], msg.as_string())
+    s.quit()
 if __name__ == '__main__': main()
 

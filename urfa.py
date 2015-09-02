@@ -21971,3 +21971,76 @@ class urfa_client(connection):
         ret['err_desc'] = self.pck.get_data(U_TP_S)
         if self.pck.recv(self.sck): return ret
         else: raise Exception("Fail recive answer from server")
+    def report_payments(self, params=dict()):
+        """ get report of payments
+        @params:
+        :(s)  user_id       :	(i) = 0
+        :(s)  ???           :	(i) = 0     aid ???
+        :(s)  group_id      :	(i) = 0
+        :(s)  dp_id         :	(i) = 0
+        :(s)  time_start    :	(i) = 0
+        :(s)  time_end      :	(i) = max_time
+        @returns:
+        :(i)  payment_id : dict : -
+        :(s)      account_id        :	(i)
+        :(s)      login             :	(s)  - user login
+        :(s)      full_name         :	(s)  - user full_name
+        :(s)      actual_date       :	(i)
+        :(s)      enter_date        :	(i)
+        :(s)      sum               :	(d)
+        :(s)      sum_incurrency    :	(d)
+        :(s)      currency_id       :	(i)  - code of currency
+        :(s)      method            :	(i)  - pay method code
+        :(s)      who_receved       :	(i)  - sysuser_id who make the payment
+        :(s)      admin_comment     :	(s)
+        :(s)      payment_ext_id    :	(s)
+        :(s)      account_ext_id    :	(s)
+        :(s)      burnt_date        :	(i)  - date of burning the pay
+        """
+        if not self.urfa_call(0x3030):
+            raise Exception("Fail of urfa_call(0x3030) [rpcf_payments_report_new]")
+            #--------- input
+        self.pck.init(code=U_PKT_DATA)
+        if 'user_id' not in params: params['user_id'] = 0
+        self.pck.add_data(params['user_id'], U_TP_I)
+        if 'account_id' not in params: params['account_id'] = 0
+        self.pck.add_data(params['account_id'], U_TP_I)
+        if 'group_id' not in params: params['group_id'] = 0
+        self.pck.add_data(params['group_id'], U_TP_I)
+        if 'dp_id' not in params: params['dp_id'] = 0
+        self.pck.add_data(params['dp_id'], U_TP_I)
+        if 'time_start' not in params: params['time_start'] = 0
+        self.pck.add_data(params['time_start'], U_TP_I)
+        if 'time_end' not in params: params['time_end'] = max_time
+        self.pck.add_data(params['time_end'], U_TP_I)
+        self.pck.send(self.sck)
+        #--------- output
+        self.pck.recv(self.sck)
+        ret = {}
+        acc_cnt = self.pck.get_data(U_TP_I)
+        while acc_cnt:
+            if params['user_id'] or params['group_id'] or params['dp_id']:
+                self.pck.recv(self.sck)
+            atr_cnt = self.pck.get_data(U_TP_I)
+            while atr_cnt:
+                self.pck.recv(self.sck)
+                payment_id = self.pck.get_data(U_TP_I)
+                ret[payment_id] = {}
+                ret[payment_id]['account_id'] = self.pck.get_data(U_TP_I)
+                ret[payment_id]['login'] = self.pck.get_data(U_TP_S)
+                ret[payment_id]['actual_date'] = self.pck.get_data(U_TP_I)
+                ret[payment_id]['enter_date'] = self.pck.get_data(U_TP_I)
+                ret[payment_id]['sum'] = self.pck.get_data(U_TP_D)
+                ret[payment_id]['sum_incurrency'] = self.pck.get_data(U_TP_D)
+                ret[payment_id]['currency_id'] = self.pck.get_data(U_TP_I)
+                ret[payment_id]['method'] = self.pck.get_data(U_TP_I)
+                ret[payment_id]['who_receved'] = self.pck.get_data(U_TP_I)
+                ret[payment_id]['admin_comment'] = self.pck.get_data(U_TP_S)
+                ret[payment_id]['payment_ext_number'] = self.pck.get_data(U_TP_S)
+                ret[payment_id]['full_name'] = self.pck.get_data(U_TP_S)
+                ret[payment_id]['acc_external_id'] = self.pck.get_data(U_TP_S)
+                ret[payment_id]['burnt_date'] = self.pck.get_data(U_TP_I)
+                atr_cnt -= 1
+            acc_cnt -= 1
+        if self.pck.recv(self.sck): return ret
+        else: raise Exception("Fail recive answer from server")

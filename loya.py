@@ -72,10 +72,10 @@ WHERE u.id = ua.uid
 GROUP BY u.id
 """
     c.execute(sql)
-    report = u'Обработка учетных записей абонентов, усастников программы лояльности:\n'
+    report = u'Обработка учетных записей абонентов, участников программы лояльности:\n'
     s = smtplib.SMTP(smtphost)
     for (uid, aid, uname, tel, lind) in c.fetchall():
-        report += u"Идентификатор абонента: %s, Лицевой счет: %s Полное имя: %s, индекс лояльности: %s\n"\
+        report += u"Идентификатор абонента: %s, Лицевой счет: %s Полное имя: %s, индекс лояльности: %s\n" \
                   % (uid, aid, uname, lind)
         pbonus = lindex2percent(lind)
         if not pbonus:
@@ -86,10 +86,10 @@ GROUP BY u.id
             pSum += pm[i]['sum']
         bonus = pbonus * pSum
         if bonus:
-            report += u"Суточный платеж: %s Начислен бонус: %s коэфициент: %s" % (pSum, bonus, pbonus)
+            report += u"Суточный платеж:%s коэфициент:%s Начислен бонус:%s" % (pSum, pbonus, bonus)
             ret = bill.rpcf_add_once_slink_ex({'user_id':uid,'account_id':aid,'service_id':bonusServiceId,'cost_coef':-bonus})
             if ret:
-                report += u" ИдСервСвязки: %s \n" % (ret,)
+                report += u" ИдСервСвязки:%s \n" % (ret,)
                 m = re.match(r'^(?:8|\+7)?([0-9]{10})',re.sub('-','',tel))
                 if m:
                     toAddr = "8%s@sms.beeline.amega-inform.ru" % m.group(1)
